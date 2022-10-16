@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.utill;
+package ru.practicum.shareit.utill;
 
 import org.springframework.beans.BeanUtils;
 

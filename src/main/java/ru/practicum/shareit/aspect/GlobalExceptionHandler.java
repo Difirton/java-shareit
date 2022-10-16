@@ -11,6 +11,8 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.practicum.shareit.item.error.ItemAuthenticationException;
+import ru.practicum.shareit.item.error.ItemNotAvailableException;
+import ru.practicum.shareit.item.error.ItemNotFoundException;
 import ru.practicum.shareit.user.error.UserEmailAlreadyExistException;
 import ru.practicum.shareit.user.error.UserNotFoundException;
 
@@ -19,6 +21,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -36,7 +39,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String REASONS = "reasons";
 
     @ExceptionHandler(value = {EntityNotFoundException.class, EmptyResultDataAccessException.class,
-            UserNotFoundException.class})
+            UserNotFoundException.class, ItemNotFoundException.class})
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
         Map<String, Object> body = this.getErrorBody(HttpStatus.NOT_FOUND, request);
         body.put(REASONS, ex.getMessage());
@@ -53,7 +56,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
-    @ExceptionHandler(value = ConstraintViolationException.class)
+    @ExceptionHandler(value = {ConstraintViolationException.class, ItemNotAvailableException.class,
+            ValidationException.class})
     protected ResponseEntity<Object> handleBadRequest(RuntimeException ex, WebRequest request) {
         Map<String, Object> body = getErrorBody(HttpStatus.BAD_REQUEST, request);
         List<String> errors = Arrays.stream(ex.getMessage().split(", ")).collect(Collectors.toList());

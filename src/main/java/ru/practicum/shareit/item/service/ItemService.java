@@ -5,6 +5,7 @@ import ru.practicum.shareit.item.repository.Item;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Validated
 public interface ItemService {
@@ -19,4 +20,6 @@ public interface ItemService {
     void deleteById(Long id, Long userId);
 
     List<Item> findByParam(String query);
+
+    Item findAvailableById(Long id);
 }

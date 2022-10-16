@@ -4,11 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.item.error.ItemAuthenticationException;
+import ru.practicum.shareit.item.error.ItemNotAvailableException;
 import ru.practicum.shareit.item.error.ItemNotFoundException;
 import ru.practicum.shareit.item.repository.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.service.UserService;
-import ru.practicum.shareit.user.utill.NotNullPropertiesCopier;
+import ru.practicum.shareit.utill.NotNullPropertiesCopier;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -61,5 +62,15 @@ public class ItemServiceImpl implements ItemService, NotNullPropertiesCopier<Ite
     @Override
     public List<Item> findByParam(String query) {
         return itemRepository.findAllByCriteria(query);
+    }
+
+    @Override
+    public Item findAvailableById(Long id) {
+        Item item = itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException(id));
+        if (item.getAvailable()) {
+            return item;
+        } else {
+            throw new ItemNotAvailableException(id);
+        }
     }
 }
