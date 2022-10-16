@@ -25,8 +25,6 @@ public class UserDto {
         @Email
         private String email;
 
-        private UserDtoBuilder() { }
-
         public UserDtoBuilder id(Long id) {
             this.id = id;
             return this;

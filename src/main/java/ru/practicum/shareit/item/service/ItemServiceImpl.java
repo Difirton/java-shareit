@@ -9,7 +9,7 @@ import ru.practicum.shareit.item.error.ItemNotFoundException;
 import ru.practicum.shareit.item.repository.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.service.UserService;
-import ru.practicum.shareit.utill.NotNullPropertiesCopier;
+import ru.practicum.shareit.common.utill.NotNullPropertiesCopier;
 
 import javax.validation.Valid;
 import java.util.List;

@@ -38,9 +38,6 @@ public class ItemDto {
         private Boolean available;
         private Long userId;
 
-        private ItemDtoBuilder() {
-        }
-
         public ItemDtoBuilder id(Long id) {
             this.id = id;
             return this;

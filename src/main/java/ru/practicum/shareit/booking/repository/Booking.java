@@ -3,12 +3,11 @@ package ru.practicum.shareit.booking.repository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.booking.repository.constant.Status;
 import ru.practicum.shareit.item.repository.Item;
 import ru.practicum.shareit.user.repository.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.Future;
-import javax.validation.constraints.FutureOrPresent;
 import java.time.LocalDateTime;
 
 @Data

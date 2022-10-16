@@ -3,7 +3,7 @@ package ru.practicum.shareit.item.repository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.itemRequest.ItemRequest;
+import ru.practicum.shareit.itemRequest.repository.ItemRequest;
 import ru.practicum.shareit.user.repository.User;
 
 import javax.persistence.*;

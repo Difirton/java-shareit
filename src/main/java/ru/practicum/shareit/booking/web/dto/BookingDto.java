@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.booking.repository.Status;
+import ru.practicum.shareit.booking.repository.constant.Status;
 import ru.practicum.shareit.item.web.dto.ItemDto;
 import ru.practicum.shareit.user.web.dto.UserDto;
 
@@ -60,9 +60,7 @@ public class BookingDto {
                 generator = ObjectIdGenerators.PropertyGenerator.class,
                 property = "id")
         private ItemDto item;
-
-        private BookingDtoBuilder() { }
-
+        
         public BookingDtoBuilder id(Long id) {
             this.id = id;
             return this;

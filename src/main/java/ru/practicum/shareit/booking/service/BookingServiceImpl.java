@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.error.BookingNoyFoundException;
 import ru.practicum.shareit.booking.repository.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.booking.repository.Status;
+import ru.practicum.shareit.booking.repository.constant.Status;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.service.UserService;
-import ru.practicum.shareit.utill.NotNullPropertiesCopier;
+import ru.practicum.shareit.common.utill.NotNullPropertiesCopier;
 
 import javax.validation.ValidationException;
 import java.util.List;
