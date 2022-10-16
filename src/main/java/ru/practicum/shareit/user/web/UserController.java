@@ -15,9 +15,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(path = "/users",
-                consumes = MediaType.ALL_VALUE,
-                produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/users", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
     private final UserService userService;
     private final UserDtoToUserConverter userDtoToUserConverter;

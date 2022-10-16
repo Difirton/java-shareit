@@ -7,7 +7,7 @@ import ru.practicum.shareit.user.error.UserEmailAlreadyExistException;
 import ru.practicum.shareit.user.repository.User;
 import ru.practicum.shareit.user.error.UserNotFoundException;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.utill.NotNullPropertiesCopier;
+import ru.practicum.shareit.user.utill.NotNullPropertiesCopier;
 
 import javax.validation.Valid;
 import java.util.List;

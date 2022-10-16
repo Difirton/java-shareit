@@ -2,8 +2,8 @@ package ru.practicum.shareit.user.repository;
 
 import lombok.*;
 import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.item.repository.Item;
+import ru.practicum.shareit.itemRequest.ItemRequest;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -34,7 +34,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
     private List<Item> items = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
@@ -42,6 +42,21 @@ public class User {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "renter")
     private List<Booking> bookings = new ArrayList<>();
+
+    public void addItem(Item item) {
+        this.items.add(item);
+        item.setOwner(this);
+    }
+
+    public void addItemRequest(ItemRequest itemRequest) {
+        this.itemRequests.add(itemRequest);
+        itemRequest.setUser(this);
+    }
+
+    public void addBooking(Booking booking) {
+        this.bookings.add(booking);
+        booking.setRenter(this);
+    }
 
     public static UserBuilder builder() {
         return new UserBuilder();

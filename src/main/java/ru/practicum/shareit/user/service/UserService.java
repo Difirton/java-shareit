@@ -8,7 +8,7 @@ import java.util.List;
 
 @Validated
 public interface UserService {
-    User save(@Valid User mapToUser);
+    User save(@Valid User user);
 
     List<User> findAll();
 

@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import ru.practicum.shareit.item.error.ItemAuthenticationException;
 import ru.practicum.shareit.user.error.UserEmailAlreadyExistException;
 import ru.practicum.shareit.user.error.UserNotFoundException;
+
 import java.sql.SQLIntegrityConstraintViolationException;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.time.OffsetDateTime;
@@ -32,7 +35,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String PATH = "path";
     private static final String REASONS = "reasons";
 
-    @ExceptionHandler(value = {EmptyResultDataAccessException.class, UserNotFoundException.class})
+    @ExceptionHandler(value = {EntityNotFoundException.class, EmptyResultDataAccessException.class,
+            UserNotFoundException.class})
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
         Map<String, Object> body = this.getErrorBody(HttpStatus.NOT_FOUND, request);
         body.put(REASONS, ex.getMessage());
@@ -55,6 +59,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         List<String> errors = Arrays.stream(ex.getMessage().split(", ")).collect(Collectors.toList());
         body.put(REASONS, errors);
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(value = {ItemAuthenticationException.class})
+    protected ResponseEntity<Object> handleForbidden(RuntimeException ex, WebRequest request) {
+        Map<String, Object> body = getErrorBody(HttpStatus.FORBIDDEN, request);
+        body.put(REASONS, ex.getMessage());
+        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
     private Map<String, Object> getErrorBody(HttpStatus status, WebRequest request) {
