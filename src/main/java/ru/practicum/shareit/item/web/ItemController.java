@@ -137,7 +137,7 @@ public class ItemController {
     })
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
-    List<ItemDto> getItemById(@Parameter(description = "query") @RequestParam("text") String query) {
+    List<ItemDto> getItemByNameAndDescription(@Parameter(description = "query") @RequestParam("text") String query) {
         List<Item> allItems = itemService.findByParam(query);
         return allItems.stream()
                 .map(itemToItemDtoConverter::convert)
