@@ -1,9 +1,9 @@
 package ru.practicum.shareit.itemRequest.web.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.user.repository.User;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -11,9 +11,12 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Item request")
 public class ItemRequestDto {
+    @Schema(description = "Item request ID", example = "1")
     private Long id;
 
+    @Schema(description = "Item request description", example = "example", required = true)
     @NotBlank
     private String description;
 

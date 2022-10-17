@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,16 +12,23 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Item")
 public class ItemDto {
+    @Schema(description = "Item ID", example = "1")
     private Long id;
 
+    @Schema(description = "Item name", example = "example", required = true)
     @NotBlank
     private String name;
 
+    @Schema(description = "Item description", example = "example", required = true)
     @NotBlank
     private String description;
+
+    @Schema(description = "Is item available", example = "true", required = true)
     @NotNull
     private Boolean available;
+
     @JsonIgnore
     private Long userId;
 

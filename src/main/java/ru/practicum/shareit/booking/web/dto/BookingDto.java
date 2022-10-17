@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.web.dto;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,12 +18,16 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Booking")
 public class BookingDto {
+    @Schema(description = "Booking ID", example = "1")
     private Long id;
 
+    @Schema(description = "Booking start", example = "2022-10-19T21:56:04", required = true)
     @FutureOrPresent
     private LocalDateTime start;
 
+    @Schema(description = "Booking end", example = "2022-10-19T21:56:04", required = true)
     @Future
     @JsonProperty("end")
     private LocalDateTime finish;

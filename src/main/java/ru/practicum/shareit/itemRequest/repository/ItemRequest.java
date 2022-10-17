@@ -9,6 +9,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
+@NamedEntityGraph(name = "itemRequestWithUser",
+        attributeNodes = @NamedAttributeNode("user")
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,7 +29,7 @@ public class ItemRequest {
 
     private LocalDateTime created;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

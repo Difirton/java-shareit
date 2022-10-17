@@ -5,7 +5,6 @@ import ru.practicum.shareit.item.repository.Item;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @Validated
 public interface ItemService {
