@@ -73,7 +73,8 @@ public class User {
         private List<ItemRequest> itemRequests;
         private List<Booking> bookings;
 
-        private UserBuilder() { }
+        private UserBuilder() {
+        }
 
         public UserBuilder id(Long id) {
             this.id = id;

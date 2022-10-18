@@ -15,7 +15,8 @@ import java.util.Arrays;
 public class LogAudit {
 
     @Pointcut("execution(* ru.practicum.shareit..*Controller.create*(..))")
-    public void callControllerCreate() { }
+    public void callControllerCreate() {
+    }
 
     @Before("callControllerCreate()")
     public void beforeCallCreateMethod(JoinPoint jp) {
@@ -24,7 +25,8 @@ public class LogAudit {
     }
 
     @Pointcut("execution(* ru.practicum.shareit..*Controller.update*(..))")
-    public void callControllerUpdate() { }
+    public void callControllerUpdate() {
+    }
 
     @Before("callControllerUpdate()")
     public void beforeCallUpdateMethod(JoinPoint jp) {
@@ -33,7 +35,8 @@ public class LogAudit {
     }
 
     @Pointcut("execution(* ru.practicum.shareit..*Controller.delete*(..))")
-    public void callControllerDelete() { }
+    public void callControllerDelete() {
+    }
 
     @Before("callControllerDelete()")
     public void beforeCallDeleteMethod(JoinPoint jp) {

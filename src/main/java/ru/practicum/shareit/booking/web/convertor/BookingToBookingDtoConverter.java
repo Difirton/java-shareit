@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.repository.Booking;
 import ru.practicum.shareit.booking.web.dto.BookingDto;
 import ru.practicum.shareit.item.web.convertor.ItemToItemDtoConverter;
-import ru.practicum.shareit.user.web.convertor.UserDtoToUserConverter;
 import ru.practicum.shareit.user.web.convertor.UserToUserDtoConverter;
 
 @Component

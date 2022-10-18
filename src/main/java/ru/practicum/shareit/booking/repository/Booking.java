@@ -50,7 +50,8 @@ public class Booking {
         private User renter;
         private Item item;
 
-        private BookingBuilder() { }
+        private BookingBuilder() {
+        }
 
         public BookingBuilder id(Long id) {
             this.id = id;

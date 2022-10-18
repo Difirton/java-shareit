@@ -65,7 +65,7 @@ public class BookingDto {
                 generator = ObjectIdGenerators.PropertyGenerator.class,
                 property = "id")
         private ItemDto item;
-        
+
         public BookingDtoBuilder id(Long id) {
             this.id = id;
             return this;
@@ -105,6 +105,7 @@ public class BookingDto {
             this.item = item;
             return this;
         }
+
         public BookingDto build() {
             return new BookingDto(id, start, finish, status, renterId, itemId, booker, item);
         }

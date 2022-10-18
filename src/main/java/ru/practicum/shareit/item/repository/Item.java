@@ -55,7 +55,8 @@ public class Item {
         private User owner;
         private ItemRequest itemRequest;
 
-        private ItemBuilder() { }
+        private ItemBuilder() {
+        }
 
         public ItemBuilder id(Long id) {
             this.id = id;

@@ -35,7 +35,8 @@ public class ItemRequestDto {
         private LocalDateTime created;
         private Long userId;
 
-        private ItemRequestDtoBuilder() { }
+        private ItemRequestDtoBuilder() {
+        }
 
         public ItemRequestDtoBuilder id(Long id) {
             this.id = id;
