@@ -3,7 +3,7 @@ package ru.practicum.shareit.user.repository;
 import lombok.*;
 import ru.practicum.shareit.booking.repository.Booking;
 import ru.practicum.shareit.item.repository.Item;
-import ru.practicum.shareit.itemRequest.repository.ItemRequest;
+import ru.practicum.shareit.item_request.repository.ItemRequest;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;

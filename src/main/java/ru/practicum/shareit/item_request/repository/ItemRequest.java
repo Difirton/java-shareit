@@ -1,4 +1,4 @@
-package ru.practicum.shareit.itemRequest.repository;
+package ru.practicum.shareit.item_request.repository;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

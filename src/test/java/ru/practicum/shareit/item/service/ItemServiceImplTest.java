@@ -73,17 +73,20 @@ class ItemServiceImplTest {
                         .name("test2")
                         .description("testDesc2")
                         .available(false)
+                        .owner(User.builder()
+                                .id(1L)
+                                .build())
                         .build()
         );
-        when(mockRepository.findAll()).thenReturn(items);
+        when(mockRepository.findAllByOwnerId(1L)).thenReturn(items);
 
-        List<Item> returnedItems = mockRepository.findAll();
+        List<Item> returnedItems = itemService.findAll(1L);
         assertEquals(item, returnedItems.get(0));
         assertEquals(2L, returnedItems.get(1).getId());
         assertEquals("test2", returnedItems.get(1).getName());
         assertEquals("testDesc2", returnedItems.get(1).getDescription());
         assertEquals(false, returnedItems.get(1).getAvailable());
-        verify(mockRepository, times(1)).findAll();
+        verify(mockRepository, times(1)).findAllByOwnerId(1L);
     }
 
     @Test
@@ -169,7 +172,7 @@ class ItemServiceImplTest {
     @Test
     @DisplayName("Delete item by Id, expected OK")
     void testDeleteById() {
-        mockRepository.deleteById(1L);
+        itemService.deleteById(1L, 1L);
         verify(mockRepository, times(1)).deleteById(1L);
     }
 

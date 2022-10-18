@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import ru.practicum.shareit.booking.error.BookingNotFoundException;
 import ru.practicum.shareit.booking.repository.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.repository.constant.Status;
@@ -54,7 +55,7 @@ class BookingServiceImplTest {
         booking = Booking.builder()
                 .id(1L)
                 .start(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
-                .start(LocalDateTime.of(2020, 2, 1, 1, 1, 1))
+                .finish(LocalDateTime.of(2020, 2, 1, 1, 1, 1))
                 .status(Status.WAITING)
                 .renter(user)
                 .item(item)
@@ -71,7 +72,7 @@ class BookingServiceImplTest {
         Booking savedBooking = bookingService.save(booking);
         assertEquals(1L, savedBooking.getId());
         assertEquals(LocalDateTime.of(2020, 1, 1, 1, 1, 1), booking.getStart());
-        assertEquals(LocalDateTime.of(2020, 1, 1, 1, 1, 1), booking.getFinish());
+        assertEquals(LocalDateTime.of(2020, 2, 1, 1, 1, 1), booking.getFinish());
         assertEquals(Status.WAITING, savedBooking.getStatus());
         verify(mockRepository, times(1)).save(booking);
     }
@@ -84,7 +85,7 @@ class BookingServiceImplTest {
                 Booking.builder()
                         .id(2L)
                         .start(LocalDateTime.of(2021, 1, 1, 1, 1, 1))
-                        .start(LocalDateTime.of(2021, 2, 1, 1, 1, 1))
+                        .finish(LocalDateTime.of(2021, 2, 1, 1, 1, 1))
                         .status(Status.APPROVED)
                         .build()
         );
@@ -100,14 +101,48 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void findById() {
+    @DisplayName("Find all bookings, expected OK")
+    void testFindById() {
+        Booking returnedBooking = bookingService.findById(1L);
+        assertEquals(1L, returnedBooking.getId());
+        assertEquals(LocalDateTime.of(2020, 1, 1, 1, 1, 1), returnedBooking.getStart());
+        assertEquals(LocalDateTime.of(2020, 2, 1, 1, 1, 1), returnedBooking.getFinish());
+        assertEquals(Status.WAITING, returnedBooking.getStatus());
+        verify(mockRepository, times(1)).findById(1L);
     }
 
     @Test
-    void updateStatus() {
+    @DisplayName("Find bookings by Id, expected Booking Not Found Exception")
+    void testFindByIdNotFound() {
+        assertThrows(BookingNotFoundException.class, () -> bookingService.findById(2L));
     }
 
     @Test
-    void deleteById() {
+    @DisplayName("Update booking status to approved, expected OK")
+    void testUpdateStatusApproved() {
+        bookingService.updateStatus(1L, true);
+        assertEquals(Status.APPROVED, booking.getStatus());
+        verify(mockRepository, times(1)).save(booking);
+    }
+
+    @Test
+    @DisplayName("Update booking status to rejected, expected OK")
+    void testUpdateStatusRejected() {
+        bookingService.updateStatus(1L, false);
+        assertEquals(Status.REJECTED, booking.getStatus());
+        verify(mockRepository, times(1)).save(booking);
+    }
+
+    @Test
+    @DisplayName("Update booking status to rejected, expected Booking Not Found Exception")
+    void testUpdateStatusNotFound() {
+        assertThrows(BookingNotFoundException.class, () -> bookingService.updateStatus(2L, true));
+    }
+
+    @Test
+    @DisplayName("Delete item by Id, expected OK")
+    void testDeleteById() {
+        bookingService.deleteById(1L, 1L);
+        verify(mockRepository, times(1)).deleteById(1L);
     }
 }

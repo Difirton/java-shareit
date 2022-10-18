@@ -3,7 +3,7 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.error.BookingNoyFoundException;
+import ru.practicum.shareit.booking.error.BookingNotFoundException;
 import ru.practicum.shareit.booking.repository.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.repository.constant.Status;
@@ -43,13 +43,13 @@ public class BookingServiceImpl implements BookingService, NotNullPropertiesCopi
 
     @Override
     public Booking findById(Long id) {
-        return bookingRepository.findById(id).orElseThrow(() -> new BookingNoyFoundException(id));
+        return bookingRepository.findById(id).orElseThrow(() -> new BookingNotFoundException(id));
     }
 
     @Override
     public Booking updateStatus(Long id, Boolean isApproved) {
-        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new BookingNoyFoundException(id));
-        if (isApproved) {
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new BookingNotFoundException(id));
+        if (Boolean.TRUE.equals(isApproved)) {
             booking.setStatus(Status.APPROVED);
         } else {
             booking.setStatus(Status.REJECTED);

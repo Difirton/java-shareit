@@ -1,4 +1,4 @@
-package ru.practicum.shareit.itemRequest.web;
+package ru.practicum.shareit.item_request.web;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,11 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.itemRequest.repository.ItemRequest;
-import ru.practicum.shareit.itemRequest.service.ItemRequestService;
-import ru.practicum.shareit.itemRequest.web.convertor.ItemRequestDtoToItemRequestConvertor;
-import ru.practicum.shareit.itemRequest.web.convertor.ItemRequestToItemRequestDtoConvertor;
-import ru.practicum.shareit.itemRequest.web.dto.ItemRequestDto;
+import ru.practicum.shareit.item_request.repository.ItemRequest;
+import ru.practicum.shareit.item_request.service.ItemRequestService;
+import ru.practicum.shareit.item_request.web.convertor.ItemRequestDtoToItemRequestConvertor;
+import ru.practicum.shareit.item_request.web.convertor.ItemRequestToItemRequestDtoConvertor;
+import ru.practicum.shareit.item_request.web.dto.ItemRequestDto;
 import ru.practicum.shareit.user.web.dto.UserDto;
 
 import javax.validation.Valid;

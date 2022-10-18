@@ -88,8 +88,8 @@ class ItemControllerTest {
                         .description("test2Desc")
                         .available(false)
                         .build());
-
         when(mockService.findAll(1L)).thenReturn(items);
+
         mockMvc.perform(get("/items")
                         .header(USER_REQUEST_HEADER, 1L))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

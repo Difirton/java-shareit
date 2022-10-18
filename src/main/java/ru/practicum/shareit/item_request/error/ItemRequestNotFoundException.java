@@ -1,4 +1,4 @@
-package ru.practicum.shareit.itemRequest.error;
+package ru.practicum.shareit.item_request.error;
 
 import lombok.extern.slf4j.Slf4j;
 

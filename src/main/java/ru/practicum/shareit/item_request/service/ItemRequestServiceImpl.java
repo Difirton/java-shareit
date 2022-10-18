@@ -1,12 +1,12 @@
-package ru.practicum.shareit.itemRequest.service;
+package ru.practicum.shareit.item_request.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.common.utill.NotNullPropertiesCopier;
-import ru.practicum.shareit.itemRequest.error.ItemRequestNotAvailableException;
-import ru.practicum.shareit.itemRequest.error.ItemRequestNotFoundException;
-import ru.practicum.shareit.itemRequest.repository.ItemRequest;
-import ru.practicum.shareit.itemRequest.repository.ItemRequestRepository;
+import ru.practicum.shareit.item_request.error.ItemRequestAuthenticationException;
+import ru.practicum.shareit.item_request.error.ItemRequestNotFoundException;
+import ru.practicum.shareit.item_request.repository.ItemRequest;
+import ru.practicum.shareit.item_request.repository.ItemRequestRepository;
 
 import java.util.List;
 
@@ -34,8 +34,12 @@ public class ItemRequestServiceImpl implements ItemRequestService, NotNullProper
     public ItemRequest update(Long id, ItemRequest updateItemRequest) {
         ItemRequest itemRequest = itemRequestRepository.findById(id)
                 .orElseThrow(() -> new ItemRequestNotFoundException(id));
-        this.copyNotNullProperties(updateItemRequest, itemRequest);
-        return itemRequestRepository.save(itemRequest);
+        if (itemRequest.getUser().getId().equals(updateItemRequest.getUser().getId())) {
+            this.copyNotNullProperties(updateItemRequest, itemRequest);
+            return itemRequestRepository.save(itemRequest);
+        } else {
+            throw new ItemRequestAuthenticationException(itemRequest.getUser().getId());
+        }
     }
 
     @Override
@@ -45,7 +49,7 @@ public class ItemRequestServiceImpl implements ItemRequestService, NotNullProper
         if (itemRequest.getUser().getId().equals(userId)) {
             itemRequestRepository.deleteById(id);
         } else {
-            throw new ItemRequestNotAvailableException(id);
+            throw new ItemRequestAuthenticationException(id);
         }
     }
 }

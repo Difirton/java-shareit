@@ -1,4 +1,4 @@
-package ru.practicum.shareit.itemRequest.web.dto;
+package ru.practicum.shareit.item_request.web.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
