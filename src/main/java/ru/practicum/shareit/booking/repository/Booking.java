@@ -18,23 +18,24 @@ import java.time.LocalDateTime;
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bookings_seq")
-    @Column(name = "id", nullable = false)
-    Long id;
+    @SequenceGenerator(name = "bookings_seq")
+    private Long id;
 
-    LocalDateTime start;
+    private LocalDateTime start;
 
-    LocalDateTime finish;
+    private LocalDateTime finish;
 
     @Enumerated(value = EnumType.STRING)
-    Status status;
+    @Column(nullable = false, length = 20)
+    private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "renter_id")
-    User renter;
+    private User renter;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
-    Item item;
+    private Item item;
 
     public static BookingBuilder builder() {
         return new BookingBuilder();

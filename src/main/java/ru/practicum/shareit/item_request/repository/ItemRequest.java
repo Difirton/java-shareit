@@ -21,10 +21,10 @@ public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "items_requests_seq")
     @SequenceGenerator(name = "items_requests_seq")
-    @Column(name = "id", nullable = false)
     private Long id;
 
     @NotBlank
+    @Column(nullable = false)
     private String description;
 
     private LocalDateTime created;

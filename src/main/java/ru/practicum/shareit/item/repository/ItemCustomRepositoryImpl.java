@@ -16,7 +16,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
 
     @Override
     public List<Item> findAllByCriteria(String pattern) {
-        if (pattern.equals("")) {
+        if (pattern == null || pattern.equals("")) {
             return List.of();
         }
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();

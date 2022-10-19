@@ -20,7 +20,6 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "items_seq")
     @SequenceGenerator(name = "items_seq")
-    @Column(name = "id", nullable = false)
     private Long id;
 
     @NotBlank
@@ -47,10 +46,13 @@ public class Item {
     public static class ItemBuilder {
         private Long id;
         @NotBlank
+        @Column(nullable = false, length = 100)
         private String name;
         @NotBlank
+        @Column(nullable = false)
         private String description;
         @NotNull
+        @Column(nullable = false)
         private Boolean available;
         private User owner;
         private ItemRequest itemRequest;

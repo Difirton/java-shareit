@@ -24,7 +24,7 @@ public class BookingServiceImpl implements BookingService, NotNullPropertiesCopi
 
     @Override
     public Booking save(Booking booking) {
-        if (booking.getStart().isBefore(booking.getFinish())) {
+        if (booking.getStart() != null && booking.getStart().isBefore(booking.getFinish())) {
             booking.setRenter(userService.findById(booking.getRenter().getId()));
             booking.setItem(itemService.findAvailableById(booking.getItem().getId()));
             booking.setStatus(Status.WAITING);

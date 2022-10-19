@@ -22,16 +22,15 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_seq")
     @SequenceGenerator(name = "users_seq")
-    @Column(name = "id", nullable = false)
     private Long id;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String name;
 
     @Email
     @NotBlank
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 100)
     private String email;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
