@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@EqualsAndHashCode(exclude = {"items", "itemRequests", "bookings"})
-@ToString(exclude = {"items", "itemRequests", "bookings"})
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"items", "itemRequests", "bookings"})
+@ToString(exclude = {"items", "itemRequests", "bookings"})
 @Entity
 @Table(name = "users")
 public class User {

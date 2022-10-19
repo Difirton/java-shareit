@@ -1,8 +1,6 @@
 package ru.practicum.shareit.item_request.repository;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.shareit.user.repository.User;
 
 import javax.persistence.*;
@@ -29,6 +27,8 @@ public class ItemRequest {
 
     private LocalDateTime created;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

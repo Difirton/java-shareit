@@ -1,8 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.shareit.booking.repository.constant.Status;
 import ru.practicum.shareit.item.repository.Item;
 import ru.practicum.shareit.user.repository.User;
@@ -13,6 +11,8 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"renter", "item"})
+@ToString(exclude = {"renter", "item"})
 @Entity
 @Table(name = "bookings")
 public class Booking {

@@ -23,20 +23,26 @@ public class Item {
     private Long id;
 
     @NotBlank
+    @Column(nullable = false, length = 100)
     private String name;
 
     @NotBlank
+    @Column(nullable = false)
     private String description;
+
     @NotNull
+    @Column(nullable = false)
     private Boolean available;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User owner;
 
-    @OneToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToOne(fetch = FetchType.LAZY)
     private ItemRequest itemRequest;
 
     public static ItemBuilder builder() {
@@ -46,13 +52,10 @@ public class Item {
     public static class ItemBuilder {
         private Long id;
         @NotBlank
-        @Column(nullable = false, length = 100)
         private String name;
         @NotBlank
-        @Column(nullable = false)
         private String description;
         @NotNull
-        @Column(nullable = false)
         private Boolean available;
         private User owner;
         private ItemRequest itemRequest;
