@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.repository;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -16,7 +17,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
 
     @Override
     public List<Item> findAllByCriteria(String pattern) {
-        if (pattern == null || pattern.equals("")) {
+        if (StringUtils.isBlank(pattern)) {
             return List.of();
         }
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();

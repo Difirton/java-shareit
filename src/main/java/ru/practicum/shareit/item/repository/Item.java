@@ -15,6 +15,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@EqualsAndHashCode(exclude = {"owner", "itemRequest"})
+@ToString(exclude = {"owner", "itemRequest"})
 @Table(name = "items")
 public class Item {
     @Id
@@ -34,14 +36,10 @@ public class Item {
     @Column(nullable = false)
     private Boolean available;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User owner;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @OneToOne(fetch = FetchType.LAZY)
     private ItemRequest itemRequest;
 
