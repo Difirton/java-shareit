@@ -20,10 +20,6 @@ public class UserServiceImpl implements UserService, NotNullPropertiesCopier<Use
 
     @Override
     public User save(@Valid User user) {
-        //Временная конструкция до следующего ТЗ, необходима для тестов, чтобы счетчик id не повышался
-        if (userRepository.findUserByEmail(user.getEmail()).isPresent()) {
-            throw new UserEmailAlreadyExistException(user.getEmail());
-        }
         return userRepository.save(user);
     }
 

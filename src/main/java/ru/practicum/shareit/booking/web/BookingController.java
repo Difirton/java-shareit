@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.repository.Booking;
+import ru.practicum.shareit.booking.repository.constant.Status;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.web.convertor.BookingDtoToBookingConverter;
 import ru.practicum.shareit.booking.web.convertor.BookingToBookingDtoConverter;
@@ -20,6 +21,7 @@ import ru.practicum.shareit.user.web.dto.UserDto;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -66,8 +68,14 @@ public class BookingController {
     })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    List<BookingDto> getBookings(@Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId) {
-        List<Booking> allBookings = bookingService.findAll(userId);
+    List<BookingDto> getBookings(@Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId,
+                                 @PathVariable(value = "state", required = false) Optional<Status> status) {
+        List<Booking> allBookings;
+        if (status.isPresent()) {
+            allBookings = bookingService.findAll(userId, status.get());
+        } else {
+            allBookings = bookingService.findAll(userId);
+        }
         return allBookings.stream()
                 .map(bookingToBookingDtoConverter::convert)
                 .collect(Collectors.toList());
