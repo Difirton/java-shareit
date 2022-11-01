@@ -13,7 +13,6 @@ import ru.practicum.shareit.common.utill.NotNullPropertiesCopier;
 
 import javax.validation.ValidationException;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -38,13 +37,23 @@ public class BookingServiceImpl implements BookingService, NotNullPropertiesCopi
     }
 
     @Override
-    public List<Booking> findAll(Long userId) {
-        return bookingRepository.findAllByRenterId(userId);
+    public List<Booking> findAllByRenterId(Long userId, Status status) {
+        userService.findById(userId);
+        if (status == Status.ALL) {
+            return bookingRepository.findAllByRenterIdOrderByStartDesc(userId);
+        } else {
+            return bookingRepository.findAllByRenterIdAndStatusOrderByStartDesc(userId, status);
+        }
     }
-//TODO переделать
+
     @Override
-    public List<Booking> findAll(Long userId, Status status) {
-        return bookingRepository.findAllByRenterId(userId);
+    public List<Booking> findAllByOwnerId(Long userId, Status status) {
+        userService.findById(userId);
+        if (status == Status.ALL) {
+            return bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId);
+        } else {
+            return bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, status);
+        }
     }
 
     @Override

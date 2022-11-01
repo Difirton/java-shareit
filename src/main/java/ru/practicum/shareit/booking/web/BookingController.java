@@ -64,19 +64,38 @@ public class BookingController {
                     content = {
                             @Content(mediaType = "application/json")
                     }),
-            @ApiResponse(responseCode = "404", description = "Booking not found")
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     List<BookingDto> getBookings(@Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId,
-                                 @PathVariable(value = "state", required = false) Optional<Status> status) {
-        List<Booking> allBookings;
-        if (status.isPresent()) {
-            allBookings = bookingService.findAll(userId, status.get());
-        } else {
-            allBookings = bookingService.findAll(userId);
-        }
-        return allBookings.stream()
+                                 @Parameter(description = "State of booking")
+                                 @RequestParam(value = "state") Optional<String> status) {
+        return bookingService.findAllByRenterId(userId, Status.valueOf(status.orElse("ALL"))).stream()
+                .map(bookingToBookingDtoConverter::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Get the bookings by owner item id and state, which is specified in URL",
+            tags = "The booking API")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "The booking was removed",
+                    content = {
+                            @Content(mediaType = "application/json")
+                    }),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @GetMapping("/owner")
+    @ResponseStatus(HttpStatus.OK)
+    List<BookingDto> getOwnersBookingsByState(@Parameter(description = "User ID")
+                                              @RequestHeader(USER_REQUEST_HEADER) Long userId,
+                                  @Parameter(description = "State of booking")
+                                              @RequestParam(value = "state") Optional<String> status) {
+        //TODO передалать на стрингу
+
+        return bookingService.findAllByOwnerId(userId, Status.valueOf(status.orElse("ALL"))).stream()
                 .map(bookingToBookingDtoConverter::convert)
                 .collect(Collectors.toList());
     }

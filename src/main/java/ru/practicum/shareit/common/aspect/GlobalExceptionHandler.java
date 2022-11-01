@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import ru.practicum.shareit.booking.error.BookingNotFoundException;
 import ru.practicum.shareit.item.error.ItemAuthenticationException;
 import ru.practicum.shareit.item.error.ItemNotAvailableException;
 import ru.practicum.shareit.item.error.ItemNotFoundException;
@@ -39,7 +40,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String REASONS = "reasons";
 
     @ExceptionHandler(value = {EntityNotFoundException.class, EmptyResultDataAccessException.class,
-            UserNotFoundException.class, ItemNotFoundException.class})
+            UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class})
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
         Map<String, Object> body = this.getErrorBody(HttpStatus.NOT_FOUND, request);
         body.put(REASONS, ex.getMessage());

@@ -6,15 +6,14 @@ import ru.practicum.shareit.booking.repository.constant.Status;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @Validated
 public interface BookingService {
     Booking save(@Valid Booking convert);
 
-    List<Booking> findAll(Long userId);
+    List<Booking> findAllByRenterId(Long userId, Status status);
 
-    List<Booking> findAll(Long userId, Status status);
+    List<Booking> findAllByOwnerId(Long userId, Status status);
 
     Booking findById(Long id);
 
