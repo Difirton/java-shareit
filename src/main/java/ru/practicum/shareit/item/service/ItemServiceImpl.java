@@ -70,6 +70,19 @@ public class ItemServiceImpl implements ItemService, NotNullPropertiesCopier<Ite
         if (item.getAvailable()) {
             return item;
         } else {
+            //TODO добавить логирование
+            throw new ItemNotAvailableException(id);
+        }
+    }
+
+    @Override
+    public Item findAvailableRenter(Long id, Long renterId) {
+        Item item = itemRepository.findItemByIdWithCheckNotOwner(id, renterId)
+                .orElseThrow(() -> new IllegalStateException("Owner can't rent his item"));
+        if (item.getAvailable()) {
+            return item;
+        } else {
+            //TODO добавить логирование
             throw new ItemNotAvailableException(id);
         }
     }

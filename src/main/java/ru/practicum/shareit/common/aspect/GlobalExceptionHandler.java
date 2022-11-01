@@ -58,11 +58,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = {ConstraintViolationException.class, ItemNotAvailableException.class,
-            ValidationException.class})
+            ValidationException.class, IllegalStateException.class})
     protected ResponseEntity<Object> handleBadRequest(RuntimeException ex, WebRequest request) {
         Map<String, Object> body = getErrorBody(HttpStatus.BAD_REQUEST, request);
         List<String> errors = Arrays.stream(ex.getMessage().split(", ")).collect(Collectors.toList());
         body.put(REASONS, errors);
+        body.put("error", ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 

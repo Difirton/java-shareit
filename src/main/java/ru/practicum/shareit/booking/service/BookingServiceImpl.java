@@ -6,13 +6,19 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.error.BookingNotFoundException;
 import ru.practicum.shareit.booking.repository.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.booking.repository.constant.State;
 import ru.practicum.shareit.booking.repository.constant.Status;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.common.utill.NotNullPropertiesCopier;
 
 import javax.validation.ValidationException;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.booking.repository.constant.State.*;
 
 @Slf4j
 @Service
@@ -23,10 +29,10 @@ public class BookingServiceImpl implements BookingService, NotNullPropertiesCopi
     private final UserService userService;
 
     @Override
-    public Booking save(Booking booking) {
+    public Booking save(Booking booking, Long renterId) {
         if (booking.getStart() != null && booking.getStart().isBefore(booking.getFinish())) {
             booking.setRenter(userService.findById(booking.getRenter().getId()));
-            booking.setItem(itemService.findAvailableById(booking.getItem().getId()));
+            booking.setItem(itemService.findAvailableRenter(booking.getItem().getId(), renterId));
             booking.setStatus(Status.WAITING);
             return bookingRepository.save(booking);
         } else {
@@ -37,37 +43,69 @@ public class BookingServiceImpl implements BookingService, NotNullPropertiesCopi
     }
 
     @Override
-    public List<Booking> findAllByRenterId(Long userId, Status status) {
-        userService.findById(userId);
-        if (status == Status.ALL) {
-            return bookingRepository.findAllByRenterIdOrderByStartDesc(userId);
-        } else {
-            return bookingRepository.findAllByRenterIdAndStatusOrderByStartDesc(userId, status);
+    public List<Booking> findAllByRenterId(Long userId, String stateName) {
+        switch (this.checkInputStateData(userId, stateName)) {
+            case ALL:
+                return bookingRepository.findAllByRenterIdOrderByStartDesc(userId);
+            case WAITING:
+                return bookingRepository.findAllByRenterIdAndStatusOrderByStartDesc(userId, Status.WAITING);
+            case REJECTED:
+                return bookingRepository.findAllByRenterIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
+            case FUTURE:
+                return bookingRepository.findAllByRenterIdOrderByStartDesc(userId).stream()
+                        .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
+                        .collect(Collectors.toList());
+            default:
+              //TODO добавить логгирование
+                throw new IllegalStateException("Unknown state: " + stateName);
         }
     }
 
     @Override
-    public List<Booking> findAllByOwnerId(Long userId, Status status) {
-        userService.findById(userId);
-        if (status == Status.ALL) {
-            return bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId);
-        } else {
-            return bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, status);
+    public List<Booking> findAllByOwnerId(Long userId, String stateName) {
+        switch (this.checkInputStateData(userId, stateName)) {
+            case ALL:
+                return bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId);
+            case WAITING:
+                return bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
+            case REJECTED:
+                return bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
+            case FUTURE:
+                return bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId).stream()
+                        .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
+                        .collect(Collectors.toList());
+            default:
+                //TODO добавить логгирование
+                throw new IllegalStateException("Unknown state: " + stateName);
         }
     }
 
-    @Override
-    public Booking findById(Long id) {
-        return bookingRepository.findById(id).orElseThrow(() -> new BookingNotFoundException(id));
+    private State checkInputStateData(Long userId, String stateName) {
+        State state = UNSUPPORTED;
+        userService.findById(userId);
+        if (Arrays.stream(State.values()).anyMatch(s -> s.toString().equals(stateName))) {
+            state = State.valueOf(stateName);
+        }
+        return state;
     }
 
     @Override
-    public Booking updateStatus(Long id, Boolean isApproved) {
-        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new BookingNotFoundException(id));
-        if (Boolean.TRUE.equals(isApproved)) {
+    public Booking findById(Long id, Long userId) {
+        userService.findById(userId);
+        return bookingRepository.findByIdAndItemOwnerIdOrRenterId(id, userId)
+                .orElseThrow(() -> new BookingNotFoundException(id));
+    }
+
+    @Override
+    public Booking updateStatus(Long id, Long ownerId, Boolean isApproved) {
+        Booking booking = bookingRepository.findByIdAndItemOwnerId(id, ownerId)
+                .orElseThrow(() -> new BookingNotFoundException(id));
+        if (Boolean.TRUE.equals(isApproved) && booking.getStatus() != Status.APPROVED) {
             booking.setStatus(Status.APPROVED);
-        } else {
+        } else if (Boolean.FALSE.equals(isApproved) && booking.getStatus() != Status.REJECTED) {
             booking.setStatus(Status.REJECTED);
+        } else {
+            throw new IllegalStateException("Bad approve request");
         }
         return bookingRepository.save(booking);
     }

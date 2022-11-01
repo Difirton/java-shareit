@@ -21,4 +21,6 @@ public interface ItemService {
     List<Item> findByParam(String query);
 
     Item findAvailableById(Long id);
+
+    Item findAvailableRenter(Long id, Long renterId);
 }

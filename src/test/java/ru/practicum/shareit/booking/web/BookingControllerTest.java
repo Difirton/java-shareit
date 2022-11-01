@@ -76,7 +76,7 @@ class BookingControllerTest {
                 .renter(user)
                 .item(item)
                 .build();
-        when(mockService.save(any(Booking.class))).thenReturn(newBooking);
+        when(mockService.save(any(Booking.class), renterId)).thenReturn(newBooking);
 
         mockMvc.perform(post("/bookings")
                         .content(jsonMapper.writeValueAsString(newBooking))
@@ -85,7 +85,7 @@ class BookingControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(2)))
                 .andExpect(jsonPath("$.status", is(Status.WAITING.toString())));
-        verify(mockService, times(1)).save(any(Booking.class));
+        verify(mockService, times(1)).save(any(Booking.class), renterId);
     }
 
     @Test

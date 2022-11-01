@@ -9,6 +9,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ItemCustomRepositoryImpl implements ItemCustomRepository {
@@ -33,5 +34,19 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
             )
         );
         return entityManager.createQuery(criteria).getResultList();
+    }
+
+    @Override
+    public Optional<Item> findItemByIdWithCheckNotOwner(Long id, Long ownerId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Item> criteria = cb.createQuery(Item.class);
+        Root<Item> item = criteria.from(Item.class);
+        criteria.select(item).where(
+                cb.and(
+                        cb.equal(item.get("id"), id),
+                        cb.notEqual(item.get("owner"), ownerId)
+                )
+        );
+        return Optional.of(entityManager.createQuery(criteria).getSingleResult());
     }
 }

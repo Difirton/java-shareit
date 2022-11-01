@@ -69,7 +69,7 @@ class BookingServiceImplTest {
     @Test
     @DisplayName("Create new booking, expected OK")
     void testSave() {
-        Booking savedBooking = bookingService.save(booking);
+        Booking savedBooking = bookingService.save(booking, renterId);
         assertEquals(1L, savedBooking.getId());
         assertEquals(LocalDateTime.of(2020, 1, 1, 1, 1, 1), booking.getStart());
         assertEquals(LocalDateTime.of(2020, 2, 1, 1, 1, 1), booking.getFinish());

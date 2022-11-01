@@ -50,9 +50,9 @@ public class BookingController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     BookingDto createBooking(@RequestBody @Valid BookingDto bookingDto,
-                             @Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId) {
-        bookingDto.setRenterId(userId);
-        Booking newBooking = bookingService.save(bookingDtoToBookingConverter.convert(bookingDto));
+                             @Parameter(description = "Renter ID") @RequestHeader(USER_REQUEST_HEADER) Long renterId) {
+        bookingDto.setRenterId(renterId);
+        Booking newBooking = bookingService.save(bookingDtoToBookingConverter.convert(bookingDto), renterId);
         return bookingToBookingDtoConverter.convert(newBooking);
     }
 
@@ -70,8 +70,8 @@ public class BookingController {
     @ResponseStatus(HttpStatus.OK)
     List<BookingDto> getBookings(@Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId,
                                  @Parameter(description = "State of booking")
-                                 @RequestParam(value = "state") Optional<String> status) {
-        return bookingService.findAllByRenterId(userId, Status.valueOf(status.orElse("ALL"))).stream()
+                                 @RequestParam(value = "state") Optional<String> stateName) {
+        return bookingService.findAllByRenterId(userId, stateName.orElse("ALL")).stream()
                 .map(bookingToBookingDtoConverter::convert)
                 .collect(Collectors.toList());
     }
@@ -92,10 +92,8 @@ public class BookingController {
     List<BookingDto> getOwnersBookingsByState(@Parameter(description = "User ID")
                                               @RequestHeader(USER_REQUEST_HEADER) Long userId,
                                   @Parameter(description = "State of booking")
-                                              @RequestParam(value = "state") Optional<String> status) {
-        //TODO передалать на стрингу
-
-        return bookingService.findAllByOwnerId(userId, Status.valueOf(status.orElse("ALL"))).stream()
+                                              @RequestParam(value = "state") Optional<String> stateName) {
+        return bookingService.findAllByOwnerId(userId, stateName.orElse("ALL")).stream()
                 .map(bookingToBookingDtoConverter::convert)
                 .collect(Collectors.toList());
     }
@@ -112,8 +110,10 @@ public class BookingController {
     })
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    BookingDto getBookingById(@Parameter(description = "Booking ID") @PathVariable("id") Long id) {
-        return bookingToBookingDtoConverter.convert(bookingService.findById(id));
+    BookingDto getBookingById(@Parameter(description = "Booking ID") @PathVariable("id") Long id,
+                              @Parameter(description = "User ID")
+                              @RequestHeader(USER_REQUEST_HEADER) Long userId) {
+        return bookingToBookingDtoConverter.convert(bookingService.findById(id, userId));
     }
 
     @Operation(summary = "Update the booking by it's id, which is specified in URL", tags = "The booking API")
@@ -129,9 +129,11 @@ public class BookingController {
     })
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    BookingDto updateBookingStatus(@PathVariable("id") Long id, @Parameter(description = "Is booking approved")
-                                  @RequestParam("approved") Boolean isApproved) {
-        Booking booking = bookingService.updateStatus(id, isApproved);
+    BookingDto updateBookingStatus(@PathVariable("id") Long id, @Parameter(description = "Owner ID")
+                                   @RequestHeader(USER_REQUEST_HEADER) Long ownerId,
+                                   @Parameter(description = "Is booking approved")
+                                   @RequestParam("approved") Boolean isApproved) {
+        Booking booking = bookingService.updateStatus(id, ownerId, isApproved);
         return bookingToBookingDtoConverter.convert(booking);
     }
 
