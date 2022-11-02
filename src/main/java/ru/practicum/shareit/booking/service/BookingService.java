@@ -10,13 +10,13 @@ import java.util.List;
 public interface BookingService {
     Booking save(@Valid Booking booking, Long renterId);
 
-    List<Booking> findAllByRenterId(Long userId, String stateName);
+    List<Booking> findAllByRenterId(Long renterId, String stateName);
 
-    List<Booking> findAllByOwnerId(Long userId, String stateName);
+    List<Booking> findAllByOwnerId(Long ownerId, String stateName);
 
-    Booking findById(Long id, Long userId);
+    Booking findById(Long id, Long ownerId);
 
     Booking updateStatus(Long id, Long ownerId, Boolean isApproved);
 
-    void deleteById(Long id, Long userId);
+    void deleteById(Long id, Long renterId);
 }

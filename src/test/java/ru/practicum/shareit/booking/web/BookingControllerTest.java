@@ -35,7 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class BookingControllerTest {
     private static final ObjectMapper jsonMapper = JsonMapper.builder().findAndAddModules().build();
     private Booking booking;
-    private User user;
+    User owner;
+    User renter;
     private Item item;
     @Autowired
     private MockMvc mockMvc;
@@ -46,25 +47,28 @@ class BookingControllerTest {
 
     @BeforeEach
     void setUp() {
-        user = User.builder()
+        owner = User.builder()
                 .id(1L)
+                .build();
+        renter = User.builder()
+                .id(2L)
                 .build();
         item = Item.builder()
                 .id(1L)
                 .name("test")
                 .description("testDesc")
                 .available(true)
-                .owner(user)
+                .owner(owner)
                 .build();
         booking = Booking.builder()
                 .id(1L)
                 .status(Status.WAITING)
                 .start(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
                 .finish(LocalDateTime.of(2020, 2, 1, 1, 1, 1))
-                .renter(user)
+                .renter(renter)
                 .item(item)
                 .build();
-        when(mockService.findById(1L)).thenReturn(booking);
+        when(mockService.findById(1L, 1L)).thenReturn(booking);
     }
 
     @Test
@@ -73,10 +77,10 @@ class BookingControllerTest {
         Booking newBooking = Booking.builder()
                 .id(2L)
                 .status(Status.WAITING)
-                .renter(user)
+                .renter(renter)
                 .item(item)
                 .build();
-        when(mockService.save(any(Booking.class), renterId)).thenReturn(newBooking);
+        when(mockService.save(any(Booking.class), 2L)).thenReturn(newBooking);
 
         mockMvc.perform(post("/bookings")
                         .content(jsonMapper.writeValueAsString(newBooking))
@@ -85,7 +89,7 @@ class BookingControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(2)))
                 .andExpect(jsonPath("$.status", is(Status.WAITING.toString())));
-        verify(mockService, times(1)).save(any(Booking.class), renterId);
+        verify(mockService, times(1)).save(any(Booking.class), 2L);
     }
 
     @Test
@@ -98,13 +102,13 @@ class BookingControllerTest {
                         .status(Status.APPROVED)
                         .start(LocalDateTime.of(2021, 1, 1, 1, 1, 1))
                         .finish(LocalDateTime.of(2021, 2, 1, 1, 1, 1))
-                        .renter(user)
+                        .renter(renter)
                         .item(Item.builder()
                                 .id(2L)
                                 .build())
                         .build()
         );
-        when(mockService.findAllByRenterId(1L, Status.ALL)).thenReturn(bookings);
+        when(mockService.findAllByRenterId(1L, "ALL")).thenReturn(bookings);
 
         mockMvc.perform(get("/bookings")
                         .header(USER_REQUEST_HEADER, 1L))
@@ -123,7 +127,7 @@ class BookingControllerTest {
                         is(LocalDateTime.of(2021, 1, 1, 1, 1, 1).toString())))
                 .andExpect(jsonPath("$[1].end",
                         is(LocalDateTime.of(2021, 2, 1, 1, 1, 1).toString())));
-        verify(mockService, times(1)).findAllByRenterId(1L, Status.ALL);
+        verify(mockService, times(1)).findAllByRenterId(1L, "ALL");
     }
 
     @Test
@@ -139,14 +143,14 @@ class BookingControllerTest {
                         is(LocalDateTime.of(2020, 1, 1, 1, 1, 1).toString())))
                 .andExpect(jsonPath("$.end",
                         is(LocalDateTime.of(2020, 2, 1, 1, 1, 1).toString())));
-        verify(mockService, times(1)).findById(1L);
+        verify(mockService, times(1)).findById(1L, 1L);
     }
 
     @Test
     @DisplayName("Request PATCH /bookings/1, expected host answer OK")
     void testUpdateBookingStatus_OK_200() throws Exception {
         booking.setStatus(Status.APPROVED);
-        when(mockService.updateStatus(1L, true)).thenReturn(booking);
+        when(mockService.updateStatus(1L, 1L, true)).thenReturn(booking);
 
         mockMvc.perform(patch("/bookings/1")
                         .content(jsonMapper.writeValueAsString(booking))
@@ -161,7 +165,7 @@ class BookingControllerTest {
                         is(LocalDateTime.of(2020, 1, 1, 1, 1, 1).toString())))
                 .andExpect(jsonPath("$.end",
                         is(LocalDateTime.of(2020, 2, 1, 1, 1, 1).toString())));
-        verify(mockService, times(1)).updateStatus(1L, true);
+        verify(mockService, times(1)).updateStatus(1L, 1L, true);
     }
 
     @Test
@@ -171,6 +175,6 @@ class BookingControllerTest {
         mockMvc.perform(delete("/bookings/1")
                         .header(USER_REQUEST_HEADER, 1L))
                 .andExpect(status().isOk());
-        verify(mockService, times(1)).deleteById(1L, 1L);
+        verify(mockService, times(1)).deleteById(1L, 2L);
     }
 }

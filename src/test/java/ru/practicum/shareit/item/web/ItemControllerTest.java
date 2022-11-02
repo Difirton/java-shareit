@@ -13,8 +13,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.item.repository.Comment;
 import ru.practicum.shareit.item.repository.Item;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.item.web.convertor.CommentToCommentDtoConverter;
+import ru.practicum.shareit.item.web.dto.ItemDto;
 import ru.practicum.shareit.user.repository.User;
 
 import java.util.Arrays;

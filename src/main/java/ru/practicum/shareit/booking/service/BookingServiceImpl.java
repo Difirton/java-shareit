@@ -61,7 +61,7 @@ public class BookingServiceImpl implements BookingService, NotNullPropertiesCopi
             case PAST:
                 return bookingRepository.findAllByRenterIdAndFinishBeforeOrderByStartDesc(userId, LocalDateTime.now());
             default:
-              //TODO добавить логгирование
+                log.error("Request findAllByRenterId() with renter id = {} wrong state name: {}", userId, stateName);
                 throw new IllegalStateException("Unknown state: " + stateName);
         }
     }
@@ -86,7 +86,7 @@ public class BookingServiceImpl implements BookingService, NotNullPropertiesCopi
                 return bookingRepository.findAllByItemOwnerIdAndFinishBeforeOrderByStartDesc(userId,
                         LocalDateTime.now());
             default:
-                //TODO добавить логгирование
+                log.error("Request findAllByOwnerId() with owner id = {} wrong state name: {}", userId, stateName);
                 throw new IllegalStateException("Unknown state: " + stateName);
         }
     }
@@ -101,9 +101,9 @@ public class BookingServiceImpl implements BookingService, NotNullPropertiesCopi
     }
 
     @Override
-    public Booking findById(Long id, Long userId) {
-        userService.findById(userId);
-        return bookingRepository.findByIdAndItemOwnerIdOrRenterId(id, userId)
+    public Booking findById(Long id, Long ownerId) {
+        userService.findById(ownerId);
+        return bookingRepository.findByIdAndItemOwnerIdOrRenterId(id, ownerId)
                 .orElseThrow(() -> new BookingNotFoundException(id));
     }
 

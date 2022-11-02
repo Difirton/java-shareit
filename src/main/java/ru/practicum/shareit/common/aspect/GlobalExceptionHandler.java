@@ -47,7 +47,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler(value = {SQLIntegrityConstraintViolationException.class, UserEmailAlreadyExistException.class})
+    @ExceptionHandler(value = {UserEmailAlreadyExistException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         Map<String, Object> body = getErrorBody(HttpStatus.CONFLICT, request);
         Throwable cause = ex.getCause();

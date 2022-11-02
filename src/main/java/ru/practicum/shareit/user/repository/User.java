@@ -11,13 +11,12 @@ import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(of = {"id", "name", "email"})
-@ToString(of = {"id", "name", "email"})
 @Entity
 @Table(name = "users")
+@Getter @Setter @Builder
+@NoArgsConstructor @AllArgsConstructor
+@EqualsAndHashCode(of = {"id", "name", "email"})
+@ToString(of = {"id", "name", "email"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_seq")
@@ -55,58 +54,5 @@ public class User {
     public void addBooking(Booking booking) {
         this.bookings.add(booking);
         booking.setRenter(this);
-    }
-
-    public static UserBuilder builder() {
-        return new UserBuilder();
-    }
-
-    public static class UserBuilder {
-        private Long id;
-        @NotBlank
-        private String name;
-        @Email
-        @NotBlank
-        private String email;
-        private List<Item> items;
-        private List<ItemRequest> itemRequests;
-        private List<Booking> bookings;
-
-        private UserBuilder() {
-        }
-
-        public UserBuilder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public UserBuilder name(@NotBlank String name) {
-            this.name = name;
-            return this;
-        }
-
-        public UserBuilder email(@Email @NotBlank String email) {
-            this.email = email;
-            return this;
-        }
-
-        public UserBuilder items(List<Item> items) {
-            this.items = items;
-            return this;
-        }
-
-        public UserBuilder itemRequests(List<ItemRequest> itemRequests) {
-            this.itemRequests = itemRequests;
-            return this;
-        }
-
-        public UserBuilder bookings(List<Booking> bookings) {
-            this.bookings = bookings;
-            return this;
-        }
-
-        public User build() {
-            return new User(id, name, email, items, itemRequests, bookings);
-        }
     }
 }

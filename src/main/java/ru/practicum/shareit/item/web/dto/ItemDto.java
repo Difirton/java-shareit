@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import ru.practicum.shareit.item.repository.Comment;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,6 +14,7 @@ import java.util.List;
 
 @Getter @Setter @Builder
 @NoArgsConstructor @AllArgsConstructor
+@ToString
 @Schema(description = "Item")
 public class ItemDto {
     @Schema(description = "Item ID", example = "1")

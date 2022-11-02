@@ -27,6 +27,8 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 class BookingServiceImplTest {
     private Booking booking;
+    User owner;
+    User renter;
 
     @Autowired
     private BookingService bookingService;
@@ -42,34 +44,40 @@ class BookingServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        User user = User.builder()
+        owner = User.builder()
                 .id(1L)
+                .build();
+        renter = User.builder()
+                .id(2L)
                 .build();
         Item item = Item.builder()
                 .id(1L)
                 .name("test")
                 .description("testDesc")
                 .available(true)
-                .owner(user)
+                .owner(owner)
                 .build();
         booking = Booking.builder()
                 .id(1L)
                 .start(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
                 .finish(LocalDateTime.of(2020, 2, 1, 1, 1, 1))
                 .status(Status.WAITING)
-                .renter(user)
+                .renter(renter)
                 .item(item)
                 .build();
-        when(userService.findById(1L)).thenReturn(user);
+        when(userService.findById(1L)).thenReturn(owner);
+        when(userService.findById(2L)).thenReturn(renter);
         when(itemService.findById(1L)).thenReturn(item);
         when(mockRepository.save(booking)).thenReturn(booking);
+        when(mockRepository.findByIdAndItemOwnerIdOrRenterId(1L, 1L)).thenReturn(Optional.of(booking));
+        when(mockRepository.findByIdAndItemOwnerId(1L, 1L)).thenReturn(Optional.of(booking));
         when(mockRepository.findById(1L)).thenReturn(Optional.of(booking));
     }
 
     @Test
     @DisplayName("Create new booking, expected OK")
     void testSave() {
-        Booking savedBooking = bookingService.save(booking, renterId);
+        Booking savedBooking = bookingService.save(booking, 2L);
         assertEquals(1L, savedBooking.getId());
         assertEquals(LocalDateTime.of(2020, 1, 1, 1, 1, 1), booking.getStart());
         assertEquals(LocalDateTime.of(2020, 2, 1, 1, 1, 1), booking.getFinish());
@@ -103,24 +111,24 @@ class BookingServiceImplTest {
     @Test
     @DisplayName("Find all bookings, expected OK")
     void testFindById() {
-        Booking returnedBooking = bookingService.findById(1L);
+        Booking returnedBooking = bookingService.findById(1L, 1L);
         assertEquals(1L, returnedBooking.getId());
         assertEquals(LocalDateTime.of(2020, 1, 1, 1, 1, 1), returnedBooking.getStart());
         assertEquals(LocalDateTime.of(2020, 2, 1, 1, 1, 1), returnedBooking.getFinish());
         assertEquals(Status.WAITING, returnedBooking.getStatus());
-        verify(mockRepository, times(1)).findById(1L);
+        verify(mockRepository, times(1)).findByIdAndItemOwnerIdOrRenterId(1L, 1L);
     }
 
     @Test
     @DisplayName("Find bookings by Id, expected Booking Not Found Exception")
     void testFindByIdNotFound() {
-        assertThrows(BookingNotFoundException.class, () -> bookingService.findById(2L));
+        assertThrows(BookingNotFoundException.class, () -> bookingService.findById(2L, 1L));
     }
 
     @Test
     @DisplayName("Update booking status to approved, expected OK")
     void testUpdateStatusApproved() {
-        bookingService.updateStatus(1L, true);
+        bookingService.updateStatus(1L, 1L, true);
         assertEquals(Status.APPROVED, booking.getStatus());
         verify(mockRepository, times(1)).save(booking);
     }
@@ -128,7 +136,7 @@ class BookingServiceImplTest {
     @Test
     @DisplayName("Update booking status to rejected, expected OK")
     void testUpdateStatusRejected() {
-        bookingService.updateStatus(1L, false);
+        bookingService.updateStatus(1L, 1L, false);
         assertEquals(Status.REJECTED, booking.getStatus());
         verify(mockRepository, times(1)).save(booking);
     }
@@ -136,7 +144,7 @@ class BookingServiceImplTest {
     @Test
     @DisplayName("Update booking status to rejected, expected Booking Not Found Exception")
     void testUpdateStatusNotFound() {
-        assertThrows(BookingNotFoundException.class, () -> bookingService.updateStatus(2L, true));
+        assertThrows(BookingNotFoundException.class, () -> bookingService.updateStatus(2L, 1L, true));
     }
 
     @Test

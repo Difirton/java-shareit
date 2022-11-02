@@ -69,7 +69,6 @@ class ItemCustomRepositoryTest {
     @DisplayName("Test query: find all items by text in name")
     void testFindAllByCriteriaOnlyName() {
         List<Item> items = itemRepository.findAllByCriteria("4");
-        System.out.println(items);
         assertEquals(4L, items.get(0).getId());
         assertEquals("test4", items.get(0).getName());
         assertEquals("desc4Testff", items.get(0).getDescription());
