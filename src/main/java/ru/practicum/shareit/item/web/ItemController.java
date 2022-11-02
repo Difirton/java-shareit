@@ -11,13 +11,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.repository.Comment;
 import ru.practicum.shareit.item.repository.Item;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.item.web.convertor.CommentDtoToCommentConverter;
+import ru.practicum.shareit.item.web.convertor.CommentToCommentDtoConverter;
 import ru.practicum.shareit.item.web.convertor.ItemDtoToItemConverter;
 import ru.practicum.shareit.item.web.convertor.ItemToItemDtoConverter;
+import ru.practicum.shareit.item.web.dto.CommentDto;
 import ru.practicum.shareit.item.web.dto.ItemDto;
 import ru.practicum.shareit.user.web.dto.UserDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +34,8 @@ public class ItemController {
     private final ItemService itemService;
     private final ItemDtoToItemConverter itemDtoToItemConverter;
     private final ItemToItemDtoConverter itemToItemDtoConverter;
+    private final CommentDtoToCommentConverter commentDtoToCommentConverter;
+    private final CommentToCommentDtoConverter commentToCommentDtoConverter;
     private static final String USER_REQUEST_HEADER = "X-Sharer-User-Id";
 
     @Operation(summary = "Creates a new user's items by user id, which is specified in header", tags = "The item API")
@@ -68,6 +75,7 @@ public class ItemController {
         List<Item> allItems = itemService.findAll(userId);
         return allItems.stream()
                 .map(itemToItemDtoConverter::convert)
+                .map(itemService::setBookings)
                 .collect(Collectors.toList());
     }
 
@@ -83,10 +91,14 @@ public class ItemController {
     })
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    ItemDto getItemById(@Parameter(description = "Item ID") @PathVariable("id") Long id) {
-        ItemDto itemDto = itemToItemDtoConverter.convert(itemService.findById(id));
-        return itemService.setBookings(itemDto);
-    }
+    ItemDto getItemById(@Parameter(description = "Item ID") @PathVariable("id") Long id,
+                        @Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId) {
+        Item item = itemService.findById(id);
+        if (item.getOwner().getId().equals(userId)) {
+            return itemService.setBookings(itemToItemDtoConverter.convert(itemService.findById(id)));
+        }
+        return itemToItemDtoConverter.convert(itemService.findById(id));
+    } //TODO ПЕРЕДЕЛАТЬ!!!
 
     @Operation(summary = "Update the item by it's id, which is specified in URL", tags = "The item API")
     @ApiResponses(value = {
@@ -143,5 +155,16 @@ public class ItemController {
         return allItems.stream()
                 .map(itemToItemDtoConverter::convert)
                 .collect(Collectors.toList());
+    }
+
+    @PostMapping("/{itemId}/comment")
+    @ResponseStatus(HttpStatus.OK)
+    CommentDto createComment(@RequestBody CommentDto commentDto, @PathVariable("itemId") Long itemId,
+                          @Parameter(description = "Booker ID") @RequestHeader(USER_REQUEST_HEADER) Long bookerId) {
+        commentDto.setItemId(itemId);
+        commentDto.setAuthorId(bookerId);
+        commentDto.setCreated(LocalDateTime.now());
+        Comment comment = commentDtoToCommentConverter.convert(commentDto);
+        return commentToCommentDtoConverter.convert(itemService.saveComment(comment));
     }
 }
