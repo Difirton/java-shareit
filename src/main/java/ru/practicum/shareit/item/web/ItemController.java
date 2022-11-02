@@ -84,7 +84,8 @@ public class ItemController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     ItemDto getItemById(@Parameter(description = "Item ID") @PathVariable("id") Long id) {
-        return itemToItemDtoConverter.convert(itemService.findById(id));
+        ItemDto itemDto = itemToItemDtoConverter.convert(itemService.findById(id));
+        return itemService.setBookings(itemDto);
     }
 
     @Operation(summary = "Update the item by it's id, which is specified in URL", tags = "The item API")

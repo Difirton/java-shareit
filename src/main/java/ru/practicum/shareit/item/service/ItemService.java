@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.item.repository.Item;
+import ru.practicum.shareit.item.web.dto.ItemDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -23,4 +24,6 @@ public interface ItemService {
     Item findAvailableById(Long id);
 
     Item findAvailableRenter(Long id, Long renterId);
+
+    ItemDto setBookings(ItemDto itemDto);
 }

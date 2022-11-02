@@ -1,10 +1,14 @@
 package ru.practicum.shareit.item.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.booking.repository.Booking;
+import ru.practicum.shareit.booking.web.dto.BookingDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -32,6 +36,16 @@ public class ItemDto {
     @JsonIgnore
     private Long userId;
 
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    private BookingItemDto nextBooking;
+
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    private BookingItemDto lastBooking;
+
     public static ItemDtoBuilder builder() {
         return new ItemDtoBuilder();
     }
@@ -45,6 +59,10 @@ public class ItemDto {
         @NotNull
         private Boolean available;
         private Long userId;
+
+        private BookingItemDto nextBooking;
+
+        private BookingItemDto lastBooking;
 
         public ItemDtoBuilder id(Long id) {
             this.id = id;
@@ -71,8 +89,18 @@ public class ItemDto {
             return this;
         }
 
+        public ItemDtoBuilder nextBooking(BookingItemDto nextBooking) {
+            this.nextBooking = nextBooking;
+            return this;
+        }
+
+        public ItemDtoBuilder lastBooking(BookingItemDto lastBooking) {
+            this.lastBooking = lastBooking;
+            return this;
+        }
+
         public ItemDto build() {
-            return new ItemDto(id, name, description, available, userId);
+            return new ItemDto(id, name, description, available, userId, nextBooking, lastBooking);
         }
     }
 }
