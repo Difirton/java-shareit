@@ -157,7 +157,18 @@ public class ItemController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping("/{itemId}/comment")
+    @Operation(summary = "Creates a new user's comment", tags = "The item API")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "The comment was created",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = CommentDto.class))
+                    }),
+            @ApiResponse(responseCode = "400", description = "Not valid parameters")
+    })
+    @PostMapping(path = "/{itemId}/comment", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     CommentDto createComment(@RequestBody CommentDto commentDto, @PathVariable("itemId") Long itemId,
                           @Parameter(description = "Booker ID") @RequestHeader(USER_REQUEST_HEADER) Long bookerId) {

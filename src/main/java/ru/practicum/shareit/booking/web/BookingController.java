@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.repository.Booking;
-import ru.practicum.shareit.booking.repository.constant.Status;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.web.convertor.BookingDtoToBookingConverter;
 import ru.practicum.shareit.booking.web.convertor.BookingToBookingDtoConverter;

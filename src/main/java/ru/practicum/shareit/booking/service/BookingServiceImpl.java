@@ -55,6 +55,11 @@ public class BookingServiceImpl implements BookingService, NotNullPropertiesCopi
                 return bookingRepository.findAllByRenterIdOrderByStartDesc(userId).stream()
                         .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
                         .collect(Collectors.toList());
+            case CURRENT:
+                return bookingRepository.findAllByRenterIdAndStartBeforeAndFinishAfterOrderByStartDesc(userId,
+                        LocalDateTime.now(), LocalDateTime.now());
+            case PAST:
+                return bookingRepository.findAllByRenterIdAndFinishBeforeOrderByStartDesc(userId, LocalDateTime.now());
             default:
               //TODO добавить логгирование
                 throw new IllegalStateException("Unknown state: " + stateName);
@@ -74,6 +79,12 @@ public class BookingServiceImpl implements BookingService, NotNullPropertiesCopi
                 return bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId).stream()
                         .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
                         .collect(Collectors.toList());
+            case CURRENT:
+                return bookingRepository.findAllByItemOwnerIdAndStartBeforeAndFinishAfterOrderByStartDesc(userId,
+                        LocalDateTime.now(), LocalDateTime.now());
+            case PAST:
+                return bookingRepository.findAllByItemOwnerIdAndFinishBeforeOrderByStartDesc(userId,
+                        LocalDateTime.now());
             default:
                 //TODO добавить логгирование
                 throw new IllegalStateException("Unknown state: " + stateName);
