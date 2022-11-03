@@ -1,1 +1,0 @@
-DROP TABLE IF EXISTS users, items_requests, items, bookings, comments;
