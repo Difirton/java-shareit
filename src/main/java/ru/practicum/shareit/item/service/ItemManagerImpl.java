@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.repository.Booking;
 import ru.practicum.shareit.booking.repository.constant.Status;
+import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.repository.Comment;
 import ru.practicum.shareit.item.repository.Item;
 import ru.practicum.shareit.item.web.convertor.CommentDtoToCommentConverter;
@@ -18,12 +19,14 @@ import ru.practicum.shareit.item.web.dto.ItemDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ItemManagerImpl implements ItemManager {
+    private final BookingService bookingService;
     private final ItemService itemService;
     private final ItemToItemDtoConverter itemToItemDtoConverter;
     private final ItemDtoToItemConverter itemDtoToItemConverter;
@@ -49,17 +52,16 @@ public class ItemManagerImpl implements ItemManager {
 
     @Override
     public ItemDto setBookings(ItemDto itemDto) {
-        List<Booking> allForItem = itemService.findAllByItemId(itemDto.getId());
-        LocalDateTime now = LocalDateTime.now();
-        if (!allForItem.isEmpty()) {
-            Booking last = allForItem.get(0);
-            Booking next = allForItem.get(allForItem.size() - 1);
-            log.info("setBookings(). now: {}, lastBooking.end: {}, nextBooking.start: {}",
-                    now, last.getFinish(), next.getStart());
-            if (last.getStatus() != Status.REJECTED && last.getStatus() != Status.CANCELED)
-                itemDto.setLastBooking(new BookingItemDto(last.getId(), last.getRenter().getId()));
-            if (next.getStatus() != Status.REJECTED && next.getStatus() != Status.CANCELED)
-                itemDto.setNextBooking(new BookingItemDto(next.getId(), next.getRenter().getId()));
+        List<Status> statuses = List.of(Status.APPROVED);
+        Optional<Booking> nextOpt = bookingService.findNextBookingByItemIdAndStatuses(itemDto.getId(), statuses);
+        Optional<Booking> lastOpt = bookingService.findLastBookingByItemIdAndStatuses(itemDto.getId(), statuses);
+        if (nextOpt.isPresent()) {
+            Booking next = nextOpt.get();
+            itemDto.setNextBooking(new BookingItemDto(next.getId(), next.getRenter().getId()));
+        }
+        if (lastOpt.isPresent()) {
+            Booking last = lastOpt.get();
+            itemDto.setLastBooking(new BookingItemDto(last.getId(), last.getRenter().getId()));
         }
         return itemDto;
     }

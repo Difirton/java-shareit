@@ -99,8 +99,8 @@ public class ItemServiceImpl implements ItemService, NotNullPropertiesCopier<Ite
 
     @Override
     public Comment saveComment(@Valid Comment comment) {
-        Booking booking = bookingRepository.findFirstByItemIdAndRenterIdAndStatusAndFinishBefore(comment.getItem().getId(),
-                        comment.getAuthor().getId(), Status.APPROVED, LocalDateTime.now())
+        Booking booking = bookingRepository.findFirstByItemIdAndRenterIdAndStatusAndFinishBefore(
+                comment.getItem().getId(), comment.getAuthor().getId(), Status.APPROVED, LocalDateTime.now())
                 .orElseThrow(() -> new IllegalStateException("Author with id = "
                 + comment.getAuthor().getId() + " did not rent Item with id = "+ comment.getItem().getId()));
         comment.setAuthor(booking.getRenter());

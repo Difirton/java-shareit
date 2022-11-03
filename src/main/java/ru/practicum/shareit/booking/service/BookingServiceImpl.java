@@ -16,6 +16,7 @@ import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.booking.repository.constant.State.*;
@@ -124,5 +125,17 @@ public class BookingServiceImpl implements BookingService, NotNullPropertiesCopi
     @Override
     public void deleteById(Long id, Long userId) {
         bookingRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<Booking> findLastBookingByItemIdAndStatuses(Long itemId, List<Status> statuses) {
+        return bookingRepository.findTopByItemIdAndFinishBeforeAndStatusInOrderByFinishDesc(itemId, LocalDateTime.now(),
+                statuses);
+    }
+
+    @Override
+    public Optional<Booking> findNextBookingByItemIdAndStatuses(Long itemId, List<Status> statuses) {
+        return bookingRepository.findTopByItemIdAndStartAfterAndStatusInOrderByStart(itemId, LocalDateTime.now(),
+                statuses);
     }
 }
