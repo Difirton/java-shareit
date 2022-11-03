@@ -5,7 +5,5 @@
    /\ \L\ \   \ \ \ \ \ /\ \L\.\_ \ \ \/ /\  __/  \ \ \   \ \ \_
    \ `\____\   \ \_\ \_\\ \__/.\_\ \ \_\ \ \____\  \ \_\   \ \__\
     \/_____/    \/_/\/_/ \/__/\/_/  \/_/  \/____/   \/_/    \/__/
-
-
 ${application.title} ${application.version}
 Powered by Spring Boot ${spring-boot.version}
