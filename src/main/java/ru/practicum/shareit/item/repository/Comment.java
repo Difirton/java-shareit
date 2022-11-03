@@ -20,8 +20,11 @@ public class Comment {
     private Long id;
 
     @NotBlank
-    @Column(name = "text", nullable = false)
+    @Column(name = "text", nullable = false, length = 1000)
     private String text;
+
+    @Column(name = "created", nullable = false)
+    private LocalDateTime created;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
@@ -30,6 +33,4 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private User author;
-
-    private LocalDateTime created;
 }

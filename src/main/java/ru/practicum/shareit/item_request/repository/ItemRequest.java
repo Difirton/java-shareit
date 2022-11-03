@@ -18,9 +18,10 @@ public class ItemRequest {
     private Long id;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(name = "description", nullable = false, length = 1000)
     private String description;
 
+    @Column(name = "created")
     private LocalDateTime created;
 
     @ToString.Exclude

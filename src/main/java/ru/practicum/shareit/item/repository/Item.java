@@ -23,22 +23,23 @@ public class Item {
     private Long id;
 
     @NotBlank
-    @Column(nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(name = "description", nullable = false, length = 600)
     private String description;
 
     @NotNull
-    @Column(nullable = false)
+    @Column(name = "available", nullable = false)
     private Boolean available;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "owner_id")
     private User owner;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_request_id")
     private ItemRequest itemRequest;
 
     @Builder.Default

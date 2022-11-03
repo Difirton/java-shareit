@@ -20,12 +20,14 @@ public class Booking {
     @SequenceGenerator(name = "bookings_seq")
     private Long id;
 
+    @Column(name = "start")
     private LocalDateTime start;
 
+    @Column(name = "finish")
     private LocalDateTime finish;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(name = "status", nullable = false, length = 20)
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
