@@ -21,8 +21,7 @@ import java.util.List;
 @ToString(exclude = {"owner", "itemRequest"})
 public class Item {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "items_seq")
-    @SequenceGenerator(name = "items_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
@@ -46,6 +45,6 @@ public class Item {
     private ItemRequest itemRequest;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
     private List<Comment> comments = new ArrayList<>();
 }

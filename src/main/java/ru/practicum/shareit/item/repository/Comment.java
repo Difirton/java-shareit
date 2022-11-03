@@ -18,8 +18,7 @@ import java.time.LocalDateTime;
 @ToString(of = {"id", "text"})
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_seq")
-    @SequenceGenerator(name = "comment_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank

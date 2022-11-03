@@ -17,8 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ItemRequest {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "items_requests_seq")
-    @SequenceGenerator(name = "items_requests_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank

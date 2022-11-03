@@ -22,8 +22,7 @@ import java.util.List;
 @ToString(of = {"id", "name", "email"})
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_seq")
-    @SequenceGenerator(name = "users_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank

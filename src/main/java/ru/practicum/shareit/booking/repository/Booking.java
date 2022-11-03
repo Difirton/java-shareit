@@ -19,8 +19,7 @@ import java.time.LocalDateTime;
 @ToString(exclude = {"renter", "item"})
 public class Booking {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bookings_seq")
-    @SequenceGenerator(name = "bookings_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "start")
