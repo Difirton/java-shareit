@@ -4,7 +4,6 @@ import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.repository.Booking;
 import ru.practicum.shareit.item.repository.Comment;
 import ru.practicum.shareit.item.repository.Item;
-import ru.practicum.shareit.item.web.dto.ItemDto;
 
 import javax.validation.Valid;
 import java.util.List;

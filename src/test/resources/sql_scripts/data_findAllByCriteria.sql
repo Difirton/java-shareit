@@ -3,7 +3,7 @@ VALUES (1, 'testUser', 'test@mail.ru' ),
        (2, 'test2User', 'test2@mail.ru' ),
        (3, 'test3User', 'test3@mail.ru' );
 
-INSERT INTO items (id, name, description, available, user_id)
+INSERT INTO items (id, name, description, available, owner_id)
 VALUES (1, 'testte', 'descTestss', true, 1),
        (2, 'test2ff', 'desc2Test', false, 1),
        (3, 'test3ff', 'desc3Test', true, 2),

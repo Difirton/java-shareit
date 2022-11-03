@@ -17,8 +17,6 @@ import ru.practicum.shareit.item.error.ItemNotFoundException;
 import ru.practicum.shareit.user.error.UserEmailAlreadyExistException;
 import ru.practicum.shareit.user.error.UserNotFoundException;
 
-import java.sql.SQLIntegrityConstraintViolationException;
-
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;

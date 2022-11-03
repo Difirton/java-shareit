@@ -14,7 +14,7 @@ import java.util.List;
 
 @Getter @Setter @Builder
 @NoArgsConstructor @AllArgsConstructor
-@ToString
+@ToString @EqualsAndHashCode
 @Schema(description = "Item")
 public class ItemDto {
     @Schema(description = "Item ID", example = "1")

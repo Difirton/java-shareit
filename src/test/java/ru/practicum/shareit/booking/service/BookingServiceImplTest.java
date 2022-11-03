@@ -102,8 +102,10 @@ class BookingServiceImplTest {
         List<Booking> returnedBookings = mockRepository.findAll();
         assertEquals(booking, returnedBookings.get(0));
         assertEquals(2L, returnedBookings.get(1).getId());
-        assertEquals(LocalDateTime.of(2021, 1, 1, 1, 1, 1), returnedBookings.get(1).getStart());
-        assertEquals(LocalDateTime.of(2021, 2, 1, 1, 1, 1), returnedBookings.get(1).getFinish());
+        assertEquals(LocalDateTime.of(2021, 1, 1, 1, 1, 1),
+                returnedBookings.get(1).getStart());
+        assertEquals(LocalDateTime.of(2021, 2, 1, 1, 1, 1),
+                returnedBookings.get(1).getFinish());
         assertEquals(Status.APPROVED, returnedBookings.get(1).getStatus());
         verify(mockRepository, times(1)).findAll();
     }

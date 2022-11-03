@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "items_requests")
 @Getter @Setter @Builder
+@EqualsAndHashCode
 @NoArgsConstructor @AllArgsConstructor
 public class ItemRequest {
     @Id

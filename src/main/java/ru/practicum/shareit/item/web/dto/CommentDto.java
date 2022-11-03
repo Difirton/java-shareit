@@ -7,6 +7,7 @@ import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 
 @Getter @Setter @Builder
+@ToString @EqualsAndHashCode
 @NoArgsConstructor @AllArgsConstructor
 public class CommentDto {
     private Long id;

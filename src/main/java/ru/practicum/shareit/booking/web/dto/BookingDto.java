@@ -1,8 +1,6 @@
 package ru.practicum.shareit.booking.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import ru.practicum.shareit.booking.repository.constant.Status;

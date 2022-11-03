@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.practicum.shareit.item.error.ItemAuthenticationException;
 import ru.practicum.shareit.item.error.ItemNotAvailableException;
 import ru.practicum.shareit.item.error.ItemNotFoundException;
+import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.repository.User;
@@ -34,6 +35,9 @@ class ItemServiceImplTest {
 
     @MockBean
     private UserRepository mockUserRepository;
+
+    @MockBean
+    private CommentRepository mockCommentRepository;
 
     @BeforeEach
     void setUp() {
@@ -92,6 +96,7 @@ class ItemServiceImplTest {
     @Test
     @DisplayName("Find item by Id, expected OK")
     void testFindById() {
+        when(mockCommentRepository.findAllByItemId(1L)).thenReturn(List.of());
         Item returnedItem = itemService.findById(1L);
         assertEquals(1L, returnedItem.getId());
         assertEquals("test", returnedItem.getName());

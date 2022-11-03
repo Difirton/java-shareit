@@ -24,7 +24,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -76,20 +75,20 @@ class BookingControllerTest {
     void testCreateBooking_CREATED_201() throws Exception {
         Booking newBooking = Booking.builder()
                 .id(2L)
-                .status(Status.WAITING)
                 .renter(renter)
                 .item(item)
+                .status(Status.WAITING)
                 .build();
-        when(mockService.save(any(Booking.class), 2L)).thenReturn(newBooking);
+        when(mockService.save(newBooking, 2L)).thenReturn(newBooking);
 
         mockMvc.perform(post("/bookings")
                         .content(jsonMapper.writeValueAsString(newBooking))
-                        .header(USER_REQUEST_HEADER, 1L)
+                        .header(USER_REQUEST_HEADER, 2L)
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(2)))
                 .andExpect(jsonPath("$.status", is(Status.WAITING.toString())));
-        verify(mockService, times(1)).save(any(Booking.class), 2L);
+        verify(mockService, times(1)).save(newBooking, 2L);
     }
 
     @Test
@@ -171,9 +170,9 @@ class BookingControllerTest {
     @Test
     @DisplayName("Request DELETE /bookings/1, expected host answer OK")
     void testDeleteBooking() throws Exception {
-        doNothing().when(mockService).deleteById(1L, 1L);
+        doNothing().when(mockService).deleteById(1L, 2L);
         mockMvc.perform(delete("/bookings/1")
-                        .header(USER_REQUEST_HEADER, 1L))
+                        .header(USER_REQUEST_HEADER, 2L))
                 .andExpect(status().isOk());
         verify(mockService, times(1)).deleteById(1L, 2L);
     }
