@@ -12,8 +12,11 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString @EqualsAndHashCode
 @Schema(description = "Item")
 public class ItemDto {
@@ -35,16 +38,19 @@ public class ItemDto {
     @JsonIgnore
     private Long userId;
 
+    @Schema(description = "Next booking")
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     private BookingItemDto nextBooking;
 
+    @Schema(description = "Last booking")
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     private BookingItemDto lastBooking;
 
+    @Schema(description = "Comments")
     @Builder.Default
     @JsonProperty("comments")
     List<CommentDto> commentsDto = new ArrayList<>();

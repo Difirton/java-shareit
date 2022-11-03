@@ -12,8 +12,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "items")
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(exclude = {"owner", "itemRequest"})
 @ToString(exclude = {"owner", "itemRequest"})
 public class Item {

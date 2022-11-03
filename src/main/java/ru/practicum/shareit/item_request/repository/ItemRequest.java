@@ -9,9 +9,12 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "items_requests")
-@Getter @Setter @Builder
+@Getter
+@Setter
+@Builder
 @EqualsAndHashCode
-@NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "items_requests_seq")

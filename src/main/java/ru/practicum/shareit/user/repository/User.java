@@ -13,8 +13,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(of = {"id", "name", "email"})
 @ToString(of = {"id", "name", "email"})
 public class User {

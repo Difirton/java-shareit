@@ -5,8 +5,11 @@ import lombok.*;
 
 import javax.validation.constraints.Email;
 
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "User")
 public class UserDto {
     @Schema(description = "User ID", example = "1")

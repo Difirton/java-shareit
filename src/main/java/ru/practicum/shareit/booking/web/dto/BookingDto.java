@@ -11,8 +11,11 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
 import java.time.LocalDateTime;
 
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "Booking")
 public class BookingDto {
     @Schema(description = "Booking ID", example = "1")
@@ -27,10 +30,13 @@ public class BookingDto {
     @JsonProperty("end")
     private LocalDateTime finish;
 
+    @Schema(description = "Status", example = "APPROVED")
     private Status status;
 
+    @Schema(description = "Renter ID", example = "1")
     private Long renterId;
 
+    @Schema(description = "Item ID", example = "1")
     private Long itemId;
 
     private UserDto booker;
