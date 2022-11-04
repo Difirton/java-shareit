@@ -10,13 +10,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import ru.practicum.shareit.booking.error.BookingNotFoundException;
 import ru.practicum.shareit.item.error.ItemAuthenticationException;
 import ru.practicum.shareit.item.error.ItemNotAvailableException;
 import ru.practicum.shareit.item.error.ItemNotFoundException;
 import ru.practicum.shareit.user.error.UserEmailAlreadyExistException;
 import ru.practicum.shareit.user.error.UserNotFoundException;
-
-import java.sql.SQLIntegrityConstraintViolationException;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
@@ -39,14 +38,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String REASONS = "reasons";
 
     @ExceptionHandler(value = {EntityNotFoundException.class, EmptyResultDataAccessException.class,
-            UserNotFoundException.class, ItemNotFoundException.class})
+            UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class})
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
         Map<String, Object> body = this.getErrorBody(HttpStatus.NOT_FOUND, request);
         body.put(REASONS, ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler(value = {SQLIntegrityConstraintViolationException.class, UserEmailAlreadyExistException.class})
+    @ExceptionHandler(value = {UserEmailAlreadyExistException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         Map<String, Object> body = getErrorBody(HttpStatus.CONFLICT, request);
         Throwable cause = ex.getCause();
@@ -57,11 +56,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = {ConstraintViolationException.class, ItemNotAvailableException.class,
-            ValidationException.class})
+            ValidationException.class, IllegalStateException.class})
     protected ResponseEntity<Object> handleBadRequest(RuntimeException ex, WebRequest request) {
         Map<String, Object> body = getErrorBody(HttpStatus.BAD_REQUEST, request);
         List<String> errors = Arrays.stream(ex.getMessage().split(", ")).collect(Collectors.toList());
         body.put(REASONS, errors);
+        body.put("error", ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 

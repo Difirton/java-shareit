@@ -3,7 +3,6 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import ru.practicum.shareit.user.error.UserEmailAlreadyExistException;
 import ru.practicum.shareit.user.repository.User;
 import ru.practicum.shareit.user.error.UserNotFoundException;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -20,10 +19,6 @@ public class UserServiceImpl implements UserService, NotNullPropertiesCopier<Use
 
     @Override
     public User save(@Valid User user) {
-        //Временная конструкция до следующего ТЗ, необходима для тестов, чтобы счетчик id не повышался
-        if (userRepository.findUserByEmail(user.getEmail()).isPresent()) {
-            throw new UserEmailAlreadyExistException(user.getEmail());
-        }
         return userRepository.save(user);
     }
 

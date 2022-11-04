@@ -11,24 +11,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.repository.Item;
-import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.item.web.convertor.ItemDtoToItemConverter;
-import ru.practicum.shareit.item.web.convertor.ItemToItemDtoConverter;
+import ru.practicum.shareit.item.service.ItemManager;
+import ru.practicum.shareit.item.web.dto.CommentDto;
 import ru.practicum.shareit.item.web.dto.ItemDto;
 import ru.practicum.shareit.user.web.dto.UserDto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "The item API", description = "API for interacting with endpoints associated with items")
 @RequestMapping(path = "/items", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class ItemController {
-    private final ItemService itemService;
-    private final ItemDtoToItemConverter itemDtoToItemConverter;
-    private final ItemToItemDtoConverter itemToItemDtoConverter;
+    private final ItemManager itemManager;
     private static final String USER_REQUEST_HEADER = "X-Sharer-User-Id";
 
     @Operation(summary = "Creates a new user's items by user id, which is specified in header", tags = "The item API")
@@ -47,9 +42,7 @@ public class ItemController {
     @ResponseStatus(HttpStatus.CREATED)
     ItemDto createItem(@RequestBody ItemDto itemDto,
                        @Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId) {
-        itemDto.setUserId(userId);
-        Item newItem = itemService.save(itemDtoToItemConverter.convert(itemDto));
-        return itemToItemDtoConverter.convert(newItem);
+        return itemManager.save(itemDto, userId);
     }
 
     @Operation(summary = "Get the user's items by user id, which is specified in header", tags = "The item API")
@@ -65,10 +58,7 @@ public class ItemController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     List<ItemDto> getItems(@Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId) {
-        List<Item> allItems = itemService.findAll(userId);
-        return allItems.stream()
-                .map(itemToItemDtoConverter::convert)
-                .collect(Collectors.toList());
+        return itemManager.findAll(userId);
     }
 
     @Operation(summary = "Get the item by it's id, which is specified in URL", tags = "The item API")
@@ -83,8 +73,9 @@ public class ItemController {
     })
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    ItemDto getItemById(@Parameter(description = "Item ID") @PathVariable("id") Long id) {
-        return itemToItemDtoConverter.convert(itemService.findById(id));
+    ItemDto getItemById(@Parameter(description = "Item ID") @PathVariable("id") Long id,
+                        @Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId) {
+        return itemManager.findById(id, userId);
     }
 
     @Operation(summary = "Update the item by it's id, which is specified in URL", tags = "The item API")
@@ -100,11 +91,9 @@ public class ItemController {
     })
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    ItemDto updateItemById(@PathVariable("id") Long id, @RequestBody ItemDto updateItemDto,
+    ItemDto updateItemById(@PathVariable("id") Long itemId, @RequestBody ItemDto itemDto,
                            @Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId) {
-        updateItemDto.setUserId(userId);
-        Item updatedItem = itemService.update(id, itemDtoToItemConverter.convert(updateItemDto));
-        return itemToItemDtoConverter.convert(updatedItem);
+        return itemManager.update(itemId, userId, itemDto);
     }
 
     @Operation(summary = "Delete the item by his id, which is specified in URL", tags = "The item API")
@@ -120,9 +109,9 @@ public class ItemController {
     })
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    void deleteItem(@PathVariable("id") Long id,
+    void deleteItem(@PathVariable("id") Long itemId,
                     @Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId) {
-        itemService.deleteById(id, userId);
+        itemManager.deleteById(itemId, userId);
     }
 
     @Operation(summary = "Get the desired item specified in the title or description with the requested text",
@@ -138,9 +127,24 @@ public class ItemController {
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
     List<ItemDto> getItemByNameAndDescription(@Parameter(description = "query") @RequestParam("text") String query) {
-        List<Item> allItems = itemService.findByParam(query);
-        return allItems.stream()
-                .map(itemToItemDtoConverter::convert)
-                .collect(Collectors.toList());
+        return itemManager.findItemByParam(query);
+    }
+
+    @Operation(summary = "Creates a new user's comment", tags = "The item API")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "The comment was created",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = CommentDto.class))
+                    }),
+            @ApiResponse(responseCode = "400", description = "Not valid parameters")
+    })
+    @PostMapping(path = "/{itemId}/comment", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    CommentDto createComment(@RequestBody CommentDto commentDto, @PathVariable("itemId") Long itemId,
+                          @Parameter(description = "Booker ID") @RequestHeader(USER_REQUEST_HEADER) Long bookerId) {
+        return itemManager.saveComment(itemId, bookerId, commentDto);
     }
 }

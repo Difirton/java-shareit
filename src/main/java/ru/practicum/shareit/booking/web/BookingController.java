@@ -20,6 +20,7 @@ import ru.practicum.shareit.user.web.dto.UserDto;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -48,9 +49,9 @@ public class BookingController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     BookingDto createBooking(@RequestBody @Valid BookingDto bookingDto,
-                             @Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId) {
-        bookingDto.setRenterId(userId);
-        Booking newBooking = bookingService.save(bookingDtoToBookingConverter.convert(bookingDto));
+                             @Parameter(description = "Renter ID") @RequestHeader(USER_REQUEST_HEADER) Long renterId) {
+        bookingDto.setRenterId(renterId);
+        Booking newBooking = bookingService.save(bookingDtoToBookingConverter.convert(bookingDto), renterId);
         return bookingToBookingDtoConverter.convert(newBooking);
     }
 
@@ -62,13 +63,36 @@ public class BookingController {
                     content = {
                             @Content(mediaType = "application/json")
                     }),
-            @ApiResponse(responseCode = "404", description = "Booking not found")
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    List<BookingDto> getBookings(@Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId) {
-        List<Booking> allBookings = bookingService.findAll(userId);
-        return allBookings.stream()
+    List<BookingDto> getBookings(@Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId,
+                                 @Parameter(description = "State of booking")
+                                 @RequestParam(value = "state") Optional<String> stateName) {
+        return bookingService.findAllByRenterId(userId, stateName.orElse("ALL")).stream()
+                .map(bookingToBookingDtoConverter::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Get the bookings by owner item id and state, which is specified in URL",
+            tags = "The booking API")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "The booking was removed",
+                    content = {
+                            @Content(mediaType = "application/json")
+                    }),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @GetMapping("/owner")
+    @ResponseStatus(HttpStatus.OK)
+    List<BookingDto> getOwnersBookingsByState(@Parameter(description = "User ID")
+                                              @RequestHeader(USER_REQUEST_HEADER) Long userId,
+                                  @Parameter(description = "State of booking")
+                                              @RequestParam(value = "state") Optional<String> stateName) {
+        return bookingService.findAllByOwnerId(userId, stateName.orElse("ALL")).stream()
                 .map(bookingToBookingDtoConverter::convert)
                 .collect(Collectors.toList());
     }
@@ -85,8 +109,10 @@ public class BookingController {
     })
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    BookingDto getBookingById(@Parameter(description = "Booking ID") @PathVariable("id") Long id) {
-        return bookingToBookingDtoConverter.convert(bookingService.findById(id));
+    BookingDto getBookingById(@Parameter(description = "Booking ID") @PathVariable("id") Long id,
+                              @Parameter(description = "User ID")
+                              @RequestHeader(USER_REQUEST_HEADER) Long userId) {
+        return bookingToBookingDtoConverter.convert(bookingService.findById(id, userId));
     }
 
     @Operation(summary = "Update the booking by it's id, which is specified in URL", tags = "The booking API")
@@ -102,9 +128,11 @@ public class BookingController {
     })
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    BookingDto updateBookingStatus(@PathVariable("id") Long id, @Parameter(description = "Is booking approved")
-                                  @RequestParam("approved") Boolean isApproved) {
-        Booking booking = bookingService.updateStatus(id, isApproved);
+    BookingDto updateBookingStatus(@PathVariable("id") Long id, @Parameter(description = "Owner ID")
+                                   @RequestHeader(USER_REQUEST_HEADER) Long ownerId,
+                                   @Parameter(description = "Is booking approved")
+                                   @RequestParam("approved") Boolean isApproved) {
+        Booking booking = bookingService.updateStatus(id, ownerId, isApproved);
         return bookingToBookingDtoConverter.convert(booking);
     }
 

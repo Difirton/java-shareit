@@ -1,17 +1,24 @@
 package ru.practicum.shareit.item.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
-@Data
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 @Schema(description = "Item")
 public class ItemDto {
     @Schema(description = "Item ID", example = "1")
@@ -32,47 +39,20 @@ public class ItemDto {
     @JsonIgnore
     private Long userId;
 
-    public static ItemDtoBuilder builder() {
-        return new ItemDtoBuilder();
-    }
+    @Schema(description = "Next booking")
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    private BookingItemDto nextBooking;
 
-    public static class ItemDtoBuilder {
-        private Long id;
-        @NotBlank
-        private String name;
-        @NotBlank
-        private String description;
-        @NotNull
-        private Boolean available;
-        private Long userId;
+    @Schema(description = "Last booking")
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    private BookingItemDto lastBooking;
 
-        public ItemDtoBuilder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public ItemDtoBuilder name(@NotBlank String name) {
-            this.name = name;
-            return this;
-        }
-
-        public ItemDtoBuilder description(@NotBlank String description) {
-            this.description = description;
-            return this;
-        }
-
-        public ItemDtoBuilder available(@NotNull Boolean available) {
-            this.available = available;
-            return this;
-        }
-
-        public ItemDtoBuilder userId(Long userId) {
-            this.userId = userId;
-            return this;
-        }
-
-        public ItemDto build() {
-            return new ItemDto(id, name, description, available, userId);
-        }
-    }
+    @Schema(description = "Comments")
+    @Builder.Default
+    @JsonProperty("comments")
+    List<CommentDto> commentsDto = new ArrayList<>();
 }

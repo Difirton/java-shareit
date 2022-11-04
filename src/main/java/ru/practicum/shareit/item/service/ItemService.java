@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.service;
 
 import org.springframework.validation.annotation.Validated;
+import ru.practicum.shareit.booking.repository.Booking;
+import ru.practicum.shareit.item.repository.Comment;
 import ru.practicum.shareit.item.repository.Item;
 
 import javax.validation.Valid;
@@ -21,4 +23,10 @@ public interface ItemService {
     List<Item> findByParam(String query);
 
     Item findAvailableById(Long id);
+
+    Item findAvailableRenter(Long id, Long renterId);
+
+    Comment saveComment(@Valid Comment comment);
+
+    List<Booking> findAllByItemId(Long id);
 }

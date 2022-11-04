@@ -2,19 +2,27 @@ package ru.practicum.shareit.booking.service;
 
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.repository.Booking;
+import ru.practicum.shareit.booking.repository.constant.Status;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Validated
 public interface BookingService {
-    Booking save(@Valid Booking convert);
+    Booking save(@Valid Booking booking, Long renterId);
 
-    List<Booking> findAll(Long userId);
+    List<Booking> findAllByRenterId(Long renterId, String stateName);
 
-    Booking findById(Long id);
+    List<Booking> findAllByOwnerId(Long ownerId, String stateName);
 
-    Booking updateStatus(Long id, Boolean isApproved);
+    Booking findById(Long id, Long ownerId);
 
-    void deleteById(Long id, Long userId);
+    Booking updateStatus(Long id, Long ownerId, Boolean isApproved);
+
+    void deleteById(Long id, Long renterId);
+
+    Optional<Booking> findLastBookingByItemIdAndStatuses(Long itemId, List<Status> statuses);
+
+    Optional<Booking> findNextBookingByItemIdAndStatuses(Long itemId, List<Status> statuses);
 }

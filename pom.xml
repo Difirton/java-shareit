@@ -18,8 +18,7 @@
 	<properties>
 		<java.version>11</java.version>
 		<spring.boot.version>2.7.2</spring.boot.version>
-		<mapstruct.version>1.5.3.Final</mapstruct.version>
-		<swagger.version>2.2.3</swagger.version>
+		<swagger.version>2.2.4</swagger.version>
 		<springdoc-openapi.version>1.6.11</springdoc-openapi.version>
 	</properties>
 
@@ -74,13 +73,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-			<version>${spring.boot.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.junit.vintage</groupId>
-					<artifactId>junit-vintage-engine</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<!--validator-->
@@ -134,7 +126,6 @@
 						</systemPropertyVariables>
 					</configuration>
 				</plugin>
-
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-checkstyle-plugin</artifactId>
@@ -161,7 +152,6 @@
 						</dependency>
 					</dependencies>
 				</plugin>
-
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
@@ -178,7 +168,6 @@
 						</execution>
 					</executions>
 				</plugin>
-
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>

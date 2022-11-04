@@ -13,18 +13,22 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.item.repository.Comment;
 import ru.practicum.shareit.item.repository.Item;
-import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.item.service.ItemManager;
+import ru.practicum.shareit.item.web.convertor.CommentToCommentDtoConverter;
+import ru.practicum.shareit.item.web.convertor.ItemToItemDtoConverter;
 import ru.practicum.shareit.user.repository.User;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -35,9 +39,13 @@ class ItemControllerTest {
     private static final ObjectMapper jsonMapper = JsonMapper.builder().findAndAddModules().build();
     private Item item;
     @Autowired
+    private ItemToItemDtoConverter itemToItemDtoConverter;
+    @Autowired
+    private CommentToCommentDtoConverter commentToCommentDtoConverter;
+    @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private ItemService mockService;
+    private ItemManager mockManager;
     private static final String USER_REQUEST_HEADER = "X-Sharer-User-Id";
 
     @BeforeEach
@@ -51,11 +59,11 @@ class ItemControllerTest {
                         .build())
                 .available(true)
                 .build();
-        when(mockService.findById(1L)).thenReturn(item);
+        when(mockManager.findById(1L, 1L)).thenReturn(itemToItemDtoConverter.convert(item));
     }
 
     @Test
-    @DisplayName("Request POST /items, expected host answer CREATED")
+    @DisplayName("Request GET /items/search, expected host answer CREATED")
     void testCreateItem_CREATED_201() throws Exception {
         Item newItem = Item.builder()
                 .id(2L)
@@ -63,7 +71,8 @@ class ItemControllerTest {
                 .description("test2Desc")
                 .available(false)
                 .build();
-        when(mockService.save(any(Item.class))).thenReturn(newItem);
+        when(mockManager.save(itemToItemDtoConverter.convert(newItem), 1L))
+                .thenReturn(itemToItemDtoConverter.convert(newItem));
 
         mockMvc.perform(post("/items")
                         .content(jsonMapper.writeValueAsString(newItem))
@@ -74,7 +83,7 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$.name", is("test2")))
                 .andExpect(jsonPath("$.description", is("test2Desc")))
                 .andExpect(jsonPath("$.available", is(false)));
-        verify(mockService, times(1)).save(any(Item.class));
+        verify(mockManager, times(1)).save(itemToItemDtoConverter.convert(newItem), 1L);
     }
 
     @Test
@@ -88,7 +97,9 @@ class ItemControllerTest {
                         .description("test2Desc")
                         .available(false)
                         .build());
-        when(mockService.findAll(1L)).thenReturn(items);
+        when(mockManager.findAll(1L)).thenReturn(items.stream()
+                .map(itemToItemDtoConverter::convert)
+                .collect(Collectors.toList()));
 
         mockMvc.perform(get("/items")
                         .header(USER_REQUEST_HEADER, 1L))
@@ -103,21 +114,20 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$[1].name", is("test2")))
                 .andExpect(jsonPath("$[1].description", is("test2Desc")))
                 .andExpect(jsonPath("$[1].available", is(false)));
-        verify(mockService, times(1)).findAll(1L);
+        verify(mockManager, times(1)).findAll(1L);
     }
 
     @Test
     @DisplayName("Request GET /items/1, expected host answer OK")
     void testGetItemById_OK_200() throws Exception {
         mockMvc.perform(get("/items/1")
-                        .content(jsonMapper.writeValueAsString(item))
-                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
+                        .header(USER_REQUEST_HEADER, 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is("test1")))
                 .andExpect(jsonPath("$.description", is("test1Desc")))
                 .andExpect(jsonPath("$.available", is(true)));
-        verify(mockService, times(1)).findById(1L);
+        verify(mockManager, times(1)).findById(1L, 1L);
     }
 
     @Test
@@ -132,7 +142,8 @@ class ItemControllerTest {
                         .build())
                 .available(false)
                 .build();
-        when(mockService.update(1L, item)).thenReturn(updatedItem);
+        when(mockManager.update(1L, 1L, itemToItemDtoConverter.convert(item)))
+                .thenReturn(itemToItemDtoConverter.convert(updatedItem));
 
         mockMvc.perform(patch("/items/1")
                         .content(jsonMapper.writeValueAsString(item))
@@ -144,17 +155,18 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$.name", is("updated")))
                 .andExpect(jsonPath("$.description", is("test2Desc")))
                 .andExpect(jsonPath("$.available", is(false)));
-        verify(mockService, times(1)).update(1L, item);
+        verify(mockManager, times(1)).update(1L, 1L,
+                itemToItemDtoConverter.convert(item));
     }
 
     @Test
     @DisplayName("Request DELETE /items/1, expected host answer OK")
     void testDeleteItem_OK_200() throws Exception {
-        doNothing().when(mockService).deleteById(1L, 1L);
+        doNothing().when(mockManager).deleteById(1L, 1L);
         mockMvc.perform(delete("/items/1")
                         .header(USER_REQUEST_HEADER, 1L))
                 .andExpect(status().isOk());
-        verify(mockService, times(1)).deleteById(1L, 1L);
+        verify(mockManager, times(1)).deleteById(1L, 1L);
     }
 
     @Test
@@ -162,7 +174,9 @@ class ItemControllerTest {
     void testGetItemByNameAndDescription_OK_200() throws Exception {
         List<Item> items = List.of(item);
 
-        when(mockService.findByParam("param")).thenReturn(items);
+        when(mockManager.findItemByParam("param")).thenReturn(items.stream()
+                .map(itemToItemDtoConverter::convert)
+                .collect(Collectors.toList()));
         mockMvc.perform(get("/items/search")
                         .param("text", "param"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -172,6 +186,37 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$[0].name", is("test1")))
                 .andExpect(jsonPath("$[0].description", is("test1Desc")))
                 .andExpect(jsonPath("$[0].available", is(true)));
-        verify(mockService, times(1)).findByParam("param");
+        verify(mockManager, times(1)).findItemByParam("param");
+    }
+
+    @Test
+    @DisplayName("Request POST /items/{itemId}/comment, expected host answer OK")
+    void testCreateComment_OK_200() throws Exception {
+        Comment comment = Comment.builder()
+                .id(1L)
+                .author(User.builder()
+                        .id(1L)
+                        .name("testUser")
+                        .build())
+                .item(item)
+                .text("testText")
+                .created(LocalDateTime.now().withNano(0))
+                .build();
+        when(mockManager.saveComment(1L, 1L, commentToCommentDtoConverter.convert(comment)))
+                .thenReturn(commentToCommentDtoConverter.convert(comment));
+
+        mockMvc.perform(post("/items/1/comment")
+                        .content(jsonMapper.writeValueAsString(commentToCommentDtoConverter.convert(comment)))
+                        .header(USER_REQUEST_HEADER, 1L)
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.itemId", is(1)))
+                .andExpect(jsonPath("$.text", is("testText")))
+                .andExpect(jsonPath("$.authorId", is(1)))
+                .andExpect(jsonPath("$.authorName", is("testUser")))
+                .andExpect(jsonPath("$.created", is(LocalDateTime.now().withNano(0).toString())));
+        verify(mockManager, times(1)).saveComment(1L, 1L,
+                commentToCommentDtoConverter.convert(comment));
     }
 }
