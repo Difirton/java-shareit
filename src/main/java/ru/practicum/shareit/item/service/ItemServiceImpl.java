@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.repository.Booking;
@@ -23,7 +22,6 @@ import java.util.List;
 
 @Validated
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService, NotNullPropertiesCopier<Item> {
     private final ItemRepository itemRepository;
