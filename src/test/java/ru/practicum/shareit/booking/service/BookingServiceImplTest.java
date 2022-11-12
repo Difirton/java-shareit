@@ -271,8 +271,8 @@ class BookingServiceImplTest {
     void testCaseFindAllByOwnerId5() {
         bookingService.findAllByOwnerId(2L, "CURRENT", 0, 10);
         verify(mockRepository, times(1))
-                .findAllByItemOwnerIdAndStartBeforeAndFinishAfterOrderByStartDesc(anyLong(), isA(LocalDateTime.class)
-                        , isA(LocalDateTime.class));
+                .findAllByItemOwnerIdAndStartBeforeAndFinishAfterOrderByStartDesc(anyLong(), isA(LocalDateTime.class),
+                        isA(LocalDateTime.class));
     }
 
     @Test
