@@ -9,9 +9,11 @@ public interface ItemRequestService {
 
     List<ItemRequest> findAll(Long userId);
 
-    ItemRequest findById(Long id);
+    ItemRequest findById(Long id, Long userId);
 
     ItemRequest update(Long id, ItemRequest convert);
 
     void deleteById(Long id, Long userId);
+
+    List<ItemRequest> findAllPageable(Long userId, Integer from, Integer size);
 }

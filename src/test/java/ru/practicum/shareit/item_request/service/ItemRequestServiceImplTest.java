@@ -6,12 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import ru.practicum.shareit.item_request.error.ItemRequestAuthenticationException;
 import ru.practicum.shareit.item_request.error.ItemRequestNotFoundException;
 import ru.practicum.shareit.item_request.repository.ItemRequest;
 import ru.practicum.shareit.item_request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.repository.User;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,8 +32,9 @@ class ItemRequestServiceImplTest {
     ItemRequestService itemRequestService;
 
     @MockBean
+    UserService mockUserService;
+    @MockBean
     ItemRequestRepository mockRepository;
-
     @BeforeEach
     void setUp() {
         itemRequest = ItemRequest.builder()
@@ -51,8 +55,8 @@ class ItemRequestServiceImplTest {
         ItemRequest savedItemRequest = itemRequestService.save(itemRequest);
         assertEquals(1L, savedItemRequest.getId());
         assertEquals("test", savedItemRequest.getDescription());
-        assertEquals(LocalDateTime.of(2020, 1, 1, 1, 1, 1),
-                savedItemRequest.getCreated());
+        assertEquals(LocalDateTime.now().withNano(0),
+                savedItemRequest.getCreated().withNano(0));
         verify(mockRepository, times(1)).save(savedItemRequest);
     }
 
@@ -70,7 +74,7 @@ class ItemRequestServiceImplTest {
                                 .build())
                         .build()
         );
-        when(mockRepository.findAllByUserId(1L)).thenReturn(itemsRequests);
+        when(mockRepository.findAllByUserIdOrderByCreatedDesc(1L)).thenReturn(itemsRequests);
 
         List<ItemRequest> returnedItemsRequests = itemRequestService.findAll(1L);
         assertEquals(itemRequest, returnedItemsRequests.get(0));
@@ -78,13 +82,13 @@ class ItemRequestServiceImplTest {
         assertEquals("test2", returnedItemsRequests.get(1).getDescription());
         assertEquals(LocalDateTime.of(2020, 2, 1, 1, 1, 1),
                 returnedItemsRequests.get(1).getCreated());
-        verify(mockRepository, times(1)).findAllByUserId(1L);
+        verify(mockRepository, times(1)).findAllByUserIdOrderByCreatedDesc(1L);
     }
 
     @Test
     @DisplayName("Find item request by Id, expected OK")
     void testFindById() {
-        ItemRequest returnedItemRequest = itemRequestService.findById(1L);
+        ItemRequest returnedItemRequest = itemRequestService.findById(1L, 1L);
         assertEquals(1L, returnedItemRequest.getId());
         assertEquals("test", returnedItemRequest.getDescription());
         assertEquals(LocalDateTime.of(2020, 1, 1, 1, 1, 1),
@@ -95,7 +99,7 @@ class ItemRequestServiceImplTest {
     @Test
     @DisplayName("Find item request by Id, expected Item Request Not Found Exception")
     void testFindByIdNotFound() {
-        assertThrows(ItemRequestNotFoundException.class, () -> itemRequestService.findById(2L));
+        assertThrows(ItemRequestNotFoundException.class, () -> itemRequestService.findById(2L, 1L));
     }
 
     @Test

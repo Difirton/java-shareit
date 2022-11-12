@@ -2,6 +2,8 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.error.BookingNotFoundException;
 import ru.practicum.shareit.booking.repository.Booking;
@@ -44,16 +46,19 @@ public class BookingServiceImpl implements BookingService, NotNullPropertiesCopi
     }
 
     @Override
-    public List<Booking> findAllByRenterId(Long userId, String stateName) {
+    public List<Booking> findAllByRenterId(Long userId, String stateName, Integer from, Integer size) {
+        if (size < 1 || from < 0) {
+            throw new IllegalStateException("Incorrect pagination request");
+        }
         switch (this.checkInputStateData(userId, stateName)) {
             case ALL:
-                return bookingRepository.findAllByRenterIdOrderByStartDesc(userId);
+                return bookingRepository.findAll(PageRequest.of(from, size, Sort.by("start").descending())).toList();
             case WAITING:
                 return bookingRepository.findAllByRenterIdAndStatusOrderByStartDesc(userId, Status.WAITING);
             case REJECTED:
                 return bookingRepository.findAllByRenterIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
             case FUTURE:
-                return bookingRepository.findAllByRenterIdOrderByStartDesc(userId).stream()
+                return bookingRepository.findAllByRenterIdOrderByStartDesc(userId, PageRequest.of(from, size)).stream()
                         .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
                         .collect(Collectors.toList());
             case CURRENT:
@@ -68,16 +73,20 @@ public class BookingServiceImpl implements BookingService, NotNullPropertiesCopi
     }
 
     @Override
-    public List<Booking> findAllByOwnerId(Long userId, String stateName) {
+    public List<Booking> findAllByOwnerId(Long userId, String stateName, Integer from, Integer size) {
+        if (size < 1 || from < 0) {
+            throw new IllegalStateException("Incorrect pagination request");
+        }
         switch (this.checkInputStateData(userId, stateName)) {
             case ALL:
-                return bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId);
+                return bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId, PageRequest.of(from, size));
             case WAITING:
                 return bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
             case REJECTED:
                 return bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
             case FUTURE:
-                return bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId).stream()
+                return bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId, PageRequest.of(from, size))
+                        .stream()
                         .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
                         .collect(Collectors.toList());
             case CURRENT:

@@ -17,8 +17,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"owner", "itemRequest"})
-@ToString(exclude = {"owner", "itemRequest"})
+@EqualsAndHashCode(exclude = {"owner"})
+@ToString(exclude = {"owner"})
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,11 +40,11 @@ public class Item {
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_request_id")
-    private ItemRequest itemRequest;
-
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
     private List<Comment> comments = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "item_request_id")
+    private ItemRequest itemRequest;
 }

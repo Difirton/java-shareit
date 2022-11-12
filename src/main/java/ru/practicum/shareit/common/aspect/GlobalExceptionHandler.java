@@ -14,6 +14,7 @@ import ru.practicum.shareit.booking.error.BookingNotFoundException;
 import ru.practicum.shareit.item.error.ItemAuthenticationException;
 import ru.practicum.shareit.item.error.ItemNotAvailableException;
 import ru.practicum.shareit.item.error.ItemNotFoundException;
+import ru.practicum.shareit.item_request.error.ItemRequestNotFoundException;
 import ru.practicum.shareit.user.error.UserEmailAlreadyExistException;
 import ru.practicum.shareit.user.error.UserNotFoundException;
 
@@ -38,7 +39,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String REASONS = "reasons";
 
     @ExceptionHandler(value = {EntityNotFoundException.class, EmptyResultDataAccessException.class,
-            UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class})
+            UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class,
+            ItemRequestNotFoundException.class})
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
         Map<String, Object> body = this.getErrorBody(HttpStatus.NOT_FOUND, request);
         body.put(REASONS, ex.getMessage());

@@ -55,4 +55,7 @@ public class ItemDto {
     @Builder.Default
     @JsonProperty("comments")
     List<CommentDto> commentsDto = new ArrayList<>();
+
+    @JsonProperty("requestId")
+    private Long itemRequestId;
 }
