@@ -8,6 +8,7 @@ import ru.practicum.shareit.item_request.repository.ItemRequest;
 import ru.practicum.shareit.item_request.web.dto.ItemRequestAnswerWithItemsDto;
 
 import java.util.stream.Collectors;
+
 @Component
 @RequiredArgsConstructor
 public class ItemRequestToItemRequestAnswerWithItemsDtoConvertor implements
