@@ -15,6 +15,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Optional<Booking> findByIdAndItemOwnerIdOrRenterId(Long id, Long userId);
 
     Optional<Booking> findByIdAndItemOwnerId(Long id, Long ownerId);
+
     List<Booking> findAllByRenterIdOrderByStartDesc(Long ownerId);
 
     List<Booking> findAllByRenterIdOrderByStartDesc(Long ownerId, Pageable pageable);
