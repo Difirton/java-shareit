@@ -1,6 +1,5 @@
 package ru.practicum.shareit.common.aspect;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import ru.practicum.shareit.item.error.ItemAuthenticationException;
 import ru.practicum.shareit.item.error.ItemNotAvailableException;
 import ru.practicum.shareit.item.error.ItemNotFoundException;
-
-import javax.validation.ValidationException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -9,10 +9,8 @@ import ru.practicum.shareit.item.repository.Item;
 import ru.practicum.shareit.item_request.repository.ItemRequest;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 class UserTest {
     User user;
