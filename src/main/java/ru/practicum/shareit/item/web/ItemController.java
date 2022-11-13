@@ -73,7 +73,7 @@ public class ItemController {
     })
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    ItemDto getItemById(@Parameter(description = "Item ID") @PathVariable("id") Long id,
+    public ItemDto getItemById(@Parameter(description = "Item ID") @PathVariable("id") Long id,
                         @Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId) {
         return itemManager.findById(id, userId);
     }
