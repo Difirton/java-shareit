@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 class GlobalExceptionHandlerTest {
     @Autowired
-    GlobalExceptionHandler globalExceptionHandler;
+    private GlobalExceptionHandler globalExceptionHandler;
 
     @Test
     @DisplayName("Test handle not found")
