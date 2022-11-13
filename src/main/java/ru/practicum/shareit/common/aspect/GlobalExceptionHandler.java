@@ -14,7 +14,7 @@ import ru.practicum.shareit.booking.error.BookingNotFoundException;
 import ru.practicum.shareit.item.error.ItemAuthenticationException;
 import ru.practicum.shareit.item.error.ItemNotAvailableException;
 import ru.practicum.shareit.item.error.ItemNotFoundException;
-import ru.practicum.shareit.user.error.UserEmailAlreadyExistException;
+import ru.practicum.shareit.item_request.error.ItemRequestNotFoundException;
 import ru.practicum.shareit.user.error.UserNotFoundException;
 
 import javax.persistence.EntityNotFoundException;
@@ -38,25 +38,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String REASONS = "reasons";
 
     @ExceptionHandler(value = {EntityNotFoundException.class, EmptyResultDataAccessException.class,
-            UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class})
+            UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class,
+            ItemRequestNotFoundException.class})
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
         Map<String, Object> body = this.getErrorBody(HttpStatus.NOT_FOUND, request);
         body.put(REASONS, ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler(value = {UserEmailAlreadyExistException.class})
-    protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
-        Map<String, Object> body = getErrorBody(HttpStatus.CONFLICT, request);
-        Throwable cause = ex.getCause();
-        if (cause != null) {
-            body.put(REASONS, cause.getMessage());
-        }
-        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.CONFLICT, request);
-    }
-
     @ExceptionHandler(value = {ConstraintViolationException.class, ItemNotAvailableException.class,
-            ValidationException.class, IllegalStateException.class})
+            ValidationException.class, ItemNotAvailableException.class, IllegalStateException.class})
     protected ResponseEntity<Object> handleBadRequest(RuntimeException ex, WebRequest request) {
         Map<String, Object> body = getErrorBody(HttpStatus.BAD_REQUEST, request);
         List<String> errors = Arrays.stream(ex.getMessage().split(", ")).collect(Collectors.toList());

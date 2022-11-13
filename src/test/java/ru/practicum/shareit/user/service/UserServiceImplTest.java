@@ -62,7 +62,7 @@ class UserServiceImplTest {
         );
         when(mockRepository.findAll()).thenReturn(users);
 
-        List<User> returnedUsers = mockRepository.findAll();
+        List<User> returnedUsers = userService.findAll();
         assertEquals(user, returnedUsers.get(0));
         assertEquals(2L, returnedUsers.get(1).getId());
         assertEquals("test2", returnedUsers.get(1).getName());
@@ -122,7 +122,7 @@ class UserServiceImplTest {
     @Test
     @DisplayName("Delete user by Id, expected OK")
     void testDeleteById() {
-        mockRepository.deleteById(1L);
+        userService.deleteById(1L);
         verify(mockRepository, times(1)).deleteById(1L);
     }
 }

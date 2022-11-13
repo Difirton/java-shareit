@@ -12,9 +12,9 @@ import java.util.Optional;
 public interface BookingService {
     Booking save(@Valid Booking booking, Long renterId);
 
-    List<Booking> findAllByRenterId(Long renterId, String stateName);
+    List<Booking> findAllByRenterId(Long renterId, String stateName, Integer from, Integer size);
 
-    List<Booking> findAllByOwnerId(Long ownerId, String stateName);
+    List<Booking> findAllByOwnerId(Long ownerId, String stateName, Integer from, Integer size);
 
     Booking findById(Long id, Long ownerId);
 

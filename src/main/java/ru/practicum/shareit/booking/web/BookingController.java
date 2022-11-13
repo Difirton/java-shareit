@@ -69,10 +69,13 @@ public class BookingController {
     @ResponseStatus(HttpStatus.OK)
     List<BookingDto> getBookings(@Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId,
                                  @Parameter(description = "State of booking")
-                                 @RequestParam(value = "state") Optional<String> stateName) {
-        return bookingService.findAllByRenterId(userId, stateName.orElse("ALL")).stream()
-                .map(bookingToBookingDtoConverter::convert)
-                .collect(Collectors.toList());
+                                 @RequestParam(value = "state") Optional<String> stateName,
+                                 @RequestParam Optional<Integer> from,
+                                 @RequestParam Optional<Integer> size) {
+        return bookingService.findAllByRenterId(userId, stateName.orElse("ALL"), from.orElse(0),
+                        size.orElse(20)).stream()
+                                                .map(bookingToBookingDtoConverter::convert)
+                                                .collect(Collectors.toList());
     }
 
     @Operation(summary = "Get the bookings by owner item id and state, which is specified in URL",
@@ -91,8 +94,11 @@ public class BookingController {
     List<BookingDto> getOwnersBookingsByState(@Parameter(description = "User ID")
                                               @RequestHeader(USER_REQUEST_HEADER) Long userId,
                                   @Parameter(description = "State of booking")
-                                              @RequestParam(value = "state") Optional<String> stateName) {
-        return bookingService.findAllByOwnerId(userId, stateName.orElse("ALL")).stream()
+                                              @RequestParam(value = "state") Optional<String> stateName,
+                                              @RequestParam Optional<Integer> from,
+                                              @RequestParam Optional<Integer> size) {
+        return bookingService.findAllByOwnerId(userId, stateName.orElse("ALL"), from.orElse(0),
+                        size.orElse(20)).stream()
                 .map(bookingToBookingDtoConverter::convert)
                 .collect(Collectors.toList());
     }

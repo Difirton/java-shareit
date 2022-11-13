@@ -20,6 +20,7 @@ public class ItemToItemDtoConverter implements Converter<Item, ItemDto> {
                 .name(source.getName())
                 .description(source.getDescription())
                 .available(source.getAvailable())
+                .itemRequestId(source.getItemRequest() == null ? null : source.getItemRequest().getId())
                 .commentsDto(source.getComments().stream()
                         .map(commentToCommentDtoConverter::convert)
                         .collect(Collectors.toList()))

@@ -7,15 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import ru.practicum.shareit.booking.repository.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.booking.repository.constant.Status;
 import ru.practicum.shareit.item.error.ItemAuthenticationException;
 import ru.practicum.shareit.item.error.ItemNotAvailableException;
 import ru.practicum.shareit.item.error.ItemNotFoundException;
+import ru.practicum.shareit.item.repository.Comment;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.repository.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +35,9 @@ class ItemServiceImplTest {
 
     @Autowired
     private ItemService itemService;
+
+    @MockBean
+    BookingRepository mockBookingRepository;
 
     @MockBean
     private ItemRepository mockRepository;
@@ -199,7 +208,7 @@ class ItemServiceImplTest {
     @Test
     @DisplayName("Find by param, expected OK")
     void testFindByParam() {
-        mockRepository.findAllByCriteria("test");
+        itemService.findByParam("test");
         verify(mockRepository, times(1)).findAllByCriteria("test");
     }
 
@@ -216,7 +225,7 @@ class ItemServiceImplTest {
 
     @Test
     @DisplayName("Find item by id if available, expected Item Not Found Exception")
-    void testFindAvailableNotFound() {
+    void findFirstByItemIdAndRenterIdAndStatusAndFinishBeforeFindAvailableNotFound() {
         assertThrows(ItemNotFoundException.class, () -> itemService.findAvailableById(2L));
     }
 
@@ -225,5 +234,55 @@ class ItemServiceImplTest {
     void testFindAvailableNotAvailable() {
         item.setAvailable(false);
         assertThrows(ItemNotAvailableException.class, () -> itemService.findAvailableById(1L));
+    }
+
+    @Test
+    @DisplayName("Find available renter, expected OK")
+    void testFindAvailableRenter() {
+        when(mockRepository.findItemByIdWithCheckNotOwner(1L, 1L)).thenReturn(Optional.of(item));
+        itemService.findAvailableRenter(1L, 1L);
+        verify(mockRepository, times(1)).findItemByIdWithCheckNotOwner(1L, 1L);
+    }
+
+    @Test
+    @DisplayName("Find available renter, expected Illegal State Exception")
+    void testFindAvailableRenter1() {
+        assertThrows(IllegalStateException.class, () -> itemService.findAvailableRenter(1L, 1L));
+    }
+
+    @Test
+    @DisplayName("Find available renter, expected Item Not Available Exception")
+    void testFindAvailableRenter2() {
+        item.setAvailable(false);
+        when(mockRepository.findItemByIdWithCheckNotOwner(1L, 1L)).thenReturn(Optional.of(item));
+        assertThrows(ItemNotAvailableException.class, () -> itemService.findAvailableRenter(1L, 1L));
+    }
+
+    @Test
+    @DisplayName("Test save comment, expected OK")
+    void testSaveComment() {
+        when(mockBookingRepository.findFirstByItemIdAndRenterIdAndStatusAndFinishBefore(anyLong(), anyLong(),
+                any(Status.class), any(LocalDateTime.class))).thenReturn(Optional.of(Booking.builder()
+                                                                        .status(Status.APPROVED)
+                                                                        .renter(User.builder()
+                                                                        .id(4L)
+                                                                        .build())
+                                                                        .item(item)
+                                                                        .build()));
+        Comment comment = Comment.builder()
+                .item(item)
+                .author(item.getOwner())
+                .text("test")
+                .build();
+        itemService.saveComment(comment);
+        verify(mockCommentRepository, times(1)).save(comment);
+
+    }
+
+    @Test
+    @DisplayName("Test find all by item id, expected OK")
+    void testFindAllByItemId() {
+        when(mockBookingRepository.findAllByItemIdOrderByStart(1L)).thenReturn(new ArrayList<>());
+        itemService.findAllByItemId(1L);
     }
 }

@@ -29,7 +29,6 @@ public class ItemServiceImpl implements ItemService, NotNullPropertiesCopier<Ite
     private final UserService userService;
     private final CommentRepository commentRepository;
 
-
     @Override
     public Item save(@Valid Item item) {
         userService.findById(item.getOwner().getId());

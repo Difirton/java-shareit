@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import ru.practicum.shareit.booking.error.BookingNotFoundException;
 import ru.practicum.shareit.booking.repository.Booking;
@@ -16,7 +19,9 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.repository.User;
 import ru.practicum.shareit.user.service.UserService;
 
+import javax.validation.ValidationException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,6 +88,14 @@ class BookingServiceImplTest {
         assertEquals(LocalDateTime.of(2020, 2, 1, 1, 1, 1), booking.getFinish());
         assertEquals(Status.WAITING, savedBooking.getStatus());
         verify(mockRepository, times(1)).save(booking);
+    }
+
+    @Test
+    @DisplayName("Create new no valid booking, expected ValidationException")
+    void testNoValidSave() {
+        booking.setStart(LocalDateTime.now());
+        booking.setFinish(LocalDateTime.now().minusDays(1));
+        assertThrows(ValidationException.class, () -> bookingService.save(booking, 2L));
     }
 
     @Test
@@ -154,5 +167,148 @@ class BookingServiceImplTest {
     void testDeleteById() {
         bookingService.deleteById(1L, 1L);
         verify(mockRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    @DisplayName("Test case find all by renter id, expected OK")
+    void testCaseFindAllByRenterId() {
+        when(mockRepository.findAll(PageRequest.of(0, 10, Sort.by("start").descending())))
+                .thenReturn(Page.empty());
+        bookingService.findAllByRenterId(2L, "ALL", 0, 10);
+        verify(mockRepository, times(1))
+                .findAll(PageRequest.of(0, 10, Sort.by("start").descending()));
+    }
+
+    @Test
+    @DisplayName("Test case find all by renter id, expected OK")
+    void testCaseFindAllByRenterId2() {
+        bookingService.findAllByRenterId(2L, "WAITING", 0, 10);
+        verify(mockRepository, times(1))
+                .findAllByRenterIdAndStatusOrderByStartDesc(2L, Status.WAITING);
+    }
+
+    @Test
+    @DisplayName("Test case find all by renter id, expected OK")
+    void testCaseFindAllByRenterId3() {
+        bookingService.findAllByRenterId(2L, "REJECTED", 0, 10);
+        verify(mockRepository, times(1))
+                .findAllByRenterIdAndStatusOrderByStartDesc(2L, Status.REJECTED);
+    }
+
+    @Test
+    @DisplayName("Test case find all by renter id, expected OK")
+    void testCaseFindAllByRenterId4() {
+        bookingService.findAllByRenterId(2L, "FUTURE", 0, 10);
+        verify(mockRepository, times(1))
+                .findAllByRenterIdOrderByStartDesc(2L, PageRequest.of(0, 10));
+    }
+
+    @Test
+    @DisplayName("Test case find all by renter id, expected OK")
+    void testCaseFindAllByRenterId5() {
+        bookingService.findAllByRenterId(2L, "CURRENT", 0, 10);
+        verify(mockRepository, times(1))
+                .findAllByRenterIdAndStartBeforeAndFinishAfterOrderByStartDesc(anyLong(), any(LocalDateTime.class),
+                        any(LocalDateTime.class));
+    }
+
+    @Test
+    @DisplayName("Test case find all by renter id, expected OK")
+    void testCaseFindAllByRenterId6() {
+        bookingService.findAllByRenterId(2L, "PAST", 0, 10);
+        verify(mockRepository, times(1))
+                .findAllByRenterIdAndFinishBeforeOrderByStartDesc(anyLong(), isA(LocalDateTime.class));
+    }
+
+    @Test
+    @DisplayName("Test case find all by renter id, expected IllegalStateException")
+    void testNoValidFindAllByRenterId() {
+        assertThrows(IllegalStateException.class, () -> bookingService.findAllByRenterId(2L, "ALL", -2, -2));
+    }
+
+    @Test
+    @DisplayName("Test case find all by renter id, expected IllegalStateException")
+    void testNoValidFindAllByRenterId2() {
+        assertThrows(IllegalStateException.class, () -> bookingService.findAllByRenterId(2L, "ADfdaf", 2, 2));
+    }
+
+    @Test
+    @DisplayName("Test case find all by owner id, expected OK")
+    void testCaseFindAllByOwnerId() {
+        when(mockRepository.findAllByItemOwnerIdOrderByStartDesc(2L, PageRequest.of(0, 10)))
+                .thenReturn(new ArrayList<>());
+        bookingService.findAllByOwnerId(2L, "ALL", 0, 10);
+        verify(mockRepository, times(1))
+                .findAllByItemOwnerIdOrderByStartDesc(2L, PageRequest.of(0, 10));
+    }
+
+    @Test
+    @DisplayName("Test case find all by owner id, expected OK")
+    void testCaseFindAllByOwnerId2() {
+        bookingService.findAllByOwnerId(2L, "WAITING", 0, 10);
+        verify(mockRepository, times(1))
+                .findAllByItemOwnerIdAndStatusOrderByStartDesc(2L, Status.WAITING);
+    }
+
+    @Test
+    @DisplayName("Test case find all by owner id, expected OK")
+    void testCaseFindAllByOwnerId3() {
+        bookingService.findAllByOwnerId(2L, "REJECTED", 0, 10);
+        verify(mockRepository, times(1))
+                .findAllByItemOwnerIdAndStatusOrderByStartDesc(2L, Status.REJECTED);
+    }
+
+    @Test
+    @DisplayName("Test case find all by owner id, expected OK")
+    void testCaseFindAllByOwnerId4() {
+        bookingService.findAllByOwnerId(2L, "FUTURE", 0, 10);
+        verify(mockRepository, times(1))
+                .findAllByItemOwnerIdOrderByStartDesc(2L, PageRequest.of(0, 10));
+    }
+
+    @Test
+    @DisplayName("Test case find all by owner id, expected OK")
+    void testCaseFindAllByOwnerId5() {
+        bookingService.findAllByOwnerId(2L, "CURRENT", 0, 10);
+        verify(mockRepository, times(1))
+                .findAllByItemOwnerIdAndStartBeforeAndFinishAfterOrderByStartDesc(anyLong(), isA(LocalDateTime.class),
+                        isA(LocalDateTime.class));
+    }
+
+    @Test
+    @DisplayName("Test case find all by owner id, expected OK")
+    void testCaseFindAllByOwnerId6() {
+        bookingService.findAllByOwnerId(2L, "PAST", 0, 10);
+        verify(mockRepository, times(1))
+                .findAllByItemOwnerIdAndFinishBeforeOrderByStartDesc(anyLong(), isA(LocalDateTime.class));
+    }
+
+    @Test
+    @DisplayName("Test case find all by renter id, expected IllegalStateException")
+    void testNoValidFindAllByOwnerId() {
+        assertThrows(IllegalStateException.class, () -> bookingService.findAllByOwnerId(2L, "ADfdaf", 2, 2));
+    }
+
+    @Test
+    @DisplayName("Test case find all by renter id, expected IllegalStateException")
+    void testNoValidFindAllByOwnerId2() {
+        assertThrows(IllegalStateException.class, () -> bookingService.findAllByOwnerId(2L, "ALL", -2, -2));
+    }
+
+    @Test
+    @DisplayName("Test find last booking by item id and statuses, expected OK")
+    void testFindLastBookingByItemIdAndStatuses() {
+        bookingService.findLastBookingByItemIdAndStatuses(2L, new ArrayList<>());
+        verify(mockRepository, times(1))
+                .findTopByItemIdAndFinishBeforeAndStatusInOrderByFinishDesc(anyLong(), isA(LocalDateTime.class),
+                        anyList());
+    }
+
+    @Test
+    @DisplayName("Test find next booking by item id and statuses, expected OK")
+    void testFindNextBookingByItemIdAndStatuses() {
+        bookingService.findNextBookingByItemIdAndStatuses(2L, new ArrayList<>());
+        verify(mockRepository, times(1))
+                .findTopByItemIdAndStartAfterAndStatusInOrderByStart(anyLong(), isA(LocalDateTime.class), anyList());
     }
 }

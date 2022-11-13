@@ -10,18 +10,23 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item_request.repository.ItemRequest;
 import ru.practicum.shareit.item_request.service.ItemRequestService;
 import ru.practicum.shareit.item_request.web.convertor.ItemRequestDtoToItemRequestConvertor;
+import ru.practicum.shareit.item_request.web.convertor.ItemRequestToItemRequestAnswerWithItemsDtoConvertor;
 import ru.practicum.shareit.item_request.web.convertor.ItemRequestToItemRequestDtoConvertor;
+import ru.practicum.shareit.item_request.web.dto.ItemRequestAnswerWithItemsDto;
 import ru.practicum.shareit.item_request.web.dto.ItemRequestDto;
 import ru.practicum.shareit.user.web.dto.UserDto;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "The item request API", description = "API for interacting with endpoints associated with item request")
@@ -30,13 +35,14 @@ public class ItemRequestController {
     private final ItemRequestService itemRequestService;
     private final ItemRequestDtoToItemRequestConvertor itemRequestFromDtoConvertor;
     private final ItemRequestToItemRequestDtoConvertor itemRequestToDtoConvertor;
+    private final ItemRequestToItemRequestAnswerWithItemsDtoConvertor toItemRequestAnswerWithItemsDtoConvertor;
     private static final String USER_REQUEST_HEADER = "X-Sharer-User-Id";
 
     @Operation(summary = "Creates a new user's item request by user id, which is specified in header",
             tags = "The item request API")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "201",
+                    responseCode = "200",
                     description = "The item request was created",
                     content = {
                             @Content(mediaType = "application/json",
@@ -46,7 +52,7 @@ public class ItemRequestController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     ItemRequestDto createItemRequest(@RequestBody @Valid ItemRequestDto itemRequestDto,
                                   @Parameter(description = "User ID") @RequestHeader(USER_REQUEST_HEADER) Long userId) {
         itemRequestDto.setUserId(userId);
@@ -67,11 +73,35 @@ public class ItemRequestController {
     })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    List<ItemRequestDto> getItemsRequests(@Parameter(description = "User ID")
+    List<ItemRequestAnswerWithItemsDto> getItemsRequests(@Parameter(description = "User ID")
                                           @RequestHeader(USER_REQUEST_HEADER) Long userId) {
         List<ItemRequest> allItemsRequests = itemRequestService.findAll(userId);
         return allItemsRequests.stream()
-                .map(itemRequestToDtoConvertor::convert)
+                .map(toItemRequestAnswerWithItemsDtoConvertor::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Get the user's items requests by user id, which is specified in header",
+            tags = "The item request API")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Returns the requested items requests",
+                    content = {
+                            @Content(mediaType = "application/json")
+                    }),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @GetMapping("/all")
+    @ResponseStatus(HttpStatus.OK)
+    List<ItemRequestAnswerWithItemsDto> getPageableItemsRequests(@Parameter(description = "User ID")
+                                          @RequestHeader(USER_REQUEST_HEADER) Long userId,
+                                                  @RequestParam Optional<Integer> from,
+                                                  @RequestParam Optional<Integer> size) {
+        List<ItemRequest> allPageableItemsRequests = itemRequestService.findAllPageable(userId, from.orElse(0),
+                size.orElse(20));
+        return allPageableItemsRequests.stream()
+                .map(toItemRequestAnswerWithItemsDtoConvertor::convert)
                 .collect(Collectors.toList());
     }
 
@@ -87,8 +117,9 @@ public class ItemRequestController {
     })
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    ItemRequestDto getItemRequestById(@Parameter(description = "Item request ID") @PathVariable("id") Long id) {
-        return itemRequestToDtoConvertor.convert(itemRequestService.findById(id));
+    ItemRequestAnswerWithItemsDto getItemRequestById(@Parameter(description = "Request ID") @PathVariable("id") Long id,
+                                      @RequestHeader(USER_REQUEST_HEADER) Long userId) {
+        return toItemRequestAnswerWithItemsDtoConvertor.convert(itemRequestService.findById(id, userId));
     }
 
     @Operation(summary = "Update the item request by it's id, which is specified in URL", tags = "The item request API")

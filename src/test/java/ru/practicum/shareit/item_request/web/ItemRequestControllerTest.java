@@ -49,7 +49,7 @@ class ItemRequestControllerTest {
                         .id(1L)
                         .build())
                 .build();
-        when(mockService.findById(1L)).thenReturn(itemRequest);
+        when(mockService.findById(1L, 1L)).thenReturn(itemRequest);
     }
 
     @Test
@@ -69,7 +69,7 @@ class ItemRequestControllerTest {
                         .content(jsonMapper.writeValueAsString(newItemRequest))
                         .header(USER_REQUEST_HEADER, 1L)
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(2)))
                 .andExpect(jsonPath("$.description", is("test2")))
                 .andExpect(jsonPath("$.created",
@@ -113,6 +113,7 @@ class ItemRequestControllerTest {
     @DisplayName("Request GET /requests/1, expected host answer OK")
     void testGetItemRequestById_OK_200() throws Exception {
         mockMvc.perform(get("/requests/1")
+                        .header(USER_REQUEST_HEADER, 1L)
                         .content(jsonMapper.writeValueAsString(itemRequest))
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -120,7 +121,7 @@ class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.description", is("test")))
                 .andExpect(jsonPath("$.created",
                         is(LocalDateTime.of(2020, 1, 1, 1, 1, 1).toString())));
-        verify(mockService, times(1)).findById(1L);
+        verify(mockService, times(1)).findById(1L, 1L);
     }
 
     @Test
