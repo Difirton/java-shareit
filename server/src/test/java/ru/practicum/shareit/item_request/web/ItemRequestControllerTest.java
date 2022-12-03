@@ -159,4 +159,36 @@ class ItemRequestControllerTest {
                 .andExpect(status().isOk());
         verify(mockService, times(1)).deleteById(1L, 1L);
     }
+
+    @Test
+    @DisplayName("Request GET /requests, expected host answer OK")
+    void testGetPageableItemsRequests() throws Exception {
+        List<ItemRequest> itemsRequests = List.of(
+                itemRequest,
+                ItemRequest.builder()
+                        .id(2L)
+                        .description("test2")
+                        .created(LocalDateTime.of(2020, 2, 1, 1, 1, 1))
+                        .user(User.builder()
+                                .id(1L)
+                                .build())
+                        .build()
+        );
+        when(mockService.findAllPageable(1L, 0, 20)).thenReturn(itemsRequests);
+
+        mockMvc.perform(get("/requests/all")
+                        .header(USER_REQUEST_HEADER, 1L))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].description", is("test")))
+                .andExpect(jsonPath("$[0].created",
+                        is(LocalDateTime.of(2020, 1, 1, 1, 1, 1).toString())))
+                .andExpect(jsonPath("$[1].id", is(2)))
+                .andExpect(jsonPath("$[1].description", is("test2")))
+                .andExpect(jsonPath("$[1].created",
+                        is(LocalDateTime.of(2020, 2, 1, 1, 1, 1).toString())));
+        verify(mockService, times(1)).findAllPageable(1L, 0, 20);
+    }
 }
