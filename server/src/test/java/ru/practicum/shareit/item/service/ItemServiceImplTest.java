@@ -91,7 +91,7 @@ class ItemServiceImplTest {
                                 .build())
                         .build()
         );
-        when(mockRepository.findAllByOwnerId(1L)).thenReturn(items);
+        when(mockRepository.findAllByOwnerIdOrderById(1L)).thenReturn(items);
 
         List<Item> returnedItems = itemService.findAll(1L);
         assertEquals(item, returnedItems.get(0));
@@ -99,7 +99,7 @@ class ItemServiceImplTest {
         assertEquals("test2", returnedItems.get(1).getName());
         assertEquals("testDesc2", returnedItems.get(1).getDescription());
         assertEquals(false, returnedItems.get(1).getAvailable());
-        verify(mockRepository, times(1)).findAllByOwnerId(1L);
+        verify(mockRepository, times(1)).findAllByOwnerIdOrderById(1L);
     }
 
     @Test
