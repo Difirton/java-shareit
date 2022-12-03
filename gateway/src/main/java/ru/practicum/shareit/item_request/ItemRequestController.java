@@ -84,7 +84,8 @@ public class ItemRequestController {
                                           @RequestHeader(USER_REQUEST_HEADER) Long userId,
                                                   @RequestParam Optional<Integer> from,
                                                   @RequestParam Optional<Integer> size) {
-        return itemRequestClient.findAllItemRequest(userId, from.orElse(10), size.orElse(10));    }
+        return itemRequestClient.findAllItemRequest(userId, from.orElse(10), size.orElse(10));
+    }
 
     @Operation(summary = "Get the item request by it's id, which is specified in URL", tags = "The item request API")
     @ApiResponses(value = {
