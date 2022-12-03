@@ -37,7 +37,7 @@ public class ItemServiceImpl implements ItemService, NotNullPropertiesCopier<Ite
 
     @Override
     public List<Item> findAll(Long userId) {
-        return itemRepository.findAllByOwnerId(userId);
+        return itemRepository.findAllByOwnerIdOrderById(userId);
     }
 
     @Override

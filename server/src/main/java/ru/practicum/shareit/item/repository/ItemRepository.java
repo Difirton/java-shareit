@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long>, ItemCustomRepository {
 
-    List<Item> findAllByOwnerId(Long ownerId);
+    List<Item> findAllByOwnerIdOrderById(Long ownerId);
 }
