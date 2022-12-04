@@ -127,7 +127,7 @@ class ItemManagerImplTest {
     void testFindById() {
         when(mockItemService.findById(1L)).thenReturn(item);
         itemManager.findById(1L, 1L);
-        verify(mockItemService, times(2)).findById(1L);
+        verify(mockItemService, times(1)).findById(1L);
     }
 
     @Test
