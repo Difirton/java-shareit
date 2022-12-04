@@ -11,6 +11,7 @@ import ru.practicum.shareit.booking.constant.State;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.client.BaseClient;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 @Service
@@ -27,7 +28,7 @@ public class BookingClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> createBooking(long userId, BookingDto bookingDto) {
+    public ResponseEntity<Object> createBooking(long userId, @Valid BookingDto bookingDto) {
         return post("", userId, bookingDto);
     }
 

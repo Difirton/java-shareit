@@ -10,7 +10,6 @@ import ru.practicum.shareit.booking.web.convertor.BookingDtoToBookingConverter;
 import ru.practicum.shareit.booking.web.convertor.BookingToBookingDtoConverter;
 import ru.practicum.shareit.booking.web.dto.BookingDto;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,10 +22,12 @@ public class BookingController {
     private final BookingToBookingDtoConverter bookingToBookingDtoConverter;
     private final BookingDtoToBookingConverter bookingDtoToBookingConverter;
     private static final String USER_REQUEST_HEADER = "X-Sharer-User-Id";
+    private static final int DEFAULT_SIZE = 10;
+    private static final int DEFAULT_FROM = 0;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    BookingDto createBooking(@RequestBody @Valid BookingDto bookingDto,
+    BookingDto createBooking(@RequestBody BookingDto bookingDto,
                              @RequestHeader(USER_REQUEST_HEADER) Long renterId) {
         bookingDto.setRenterId(renterId);
         Booking newBooking = bookingService.save(bookingDtoToBookingConverter.convert(bookingDto), renterId);
@@ -39,8 +40,8 @@ public class BookingController {
                                  @RequestParam(value = "state") Optional<String> stateName,
                                  @RequestParam Optional<Integer> from,
                                  @RequestParam Optional<Integer> size) {
-        return bookingService.findAllByRenterId(userId, stateName.orElse("ALL"), from.orElse(0),
-                        size.orElse(20)).stream()
+        return bookingService.findAllByRenterId(userId, stateName.orElse("ALL"), from.orElse(DEFAULT_FROM),
+                        size.orElse(DEFAULT_SIZE)).stream()
                                                 .map(bookingToBookingDtoConverter::convert)
                                                 .collect(Collectors.toList());
     }
@@ -51,8 +52,8 @@ public class BookingController {
                                               @RequestParam(value = "state") Optional<String> stateName,
                                               @RequestParam Optional<Integer> from,
                                               @RequestParam Optional<Integer> size) {
-        return bookingService.findAllByOwnerId(userId, stateName.orElse("ALL"), from.orElse(0),
-                        size.orElse(20)).stream()
+        return bookingService.findAllByOwnerId(userId, stateName.orElse("ALL"), from.orElse(DEFAULT_FROM),
+                        size.orElse(DEFAULT_SIZE)).stream()
                 .map(bookingToBookingDtoConverter::convert)
                 .collect(Collectors.toList());
     }

@@ -10,7 +10,6 @@ import ru.practicum.shareit.user.repository.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.web.dto.UserDto;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +46,7 @@ public class UserController {
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     UserDto updateUserById(@PathVariable("id") Long id,
-                           @RequestBody @Valid UserDto updateUserDto) {
+                           @RequestBody UserDto updateUserDto) {
         User updatedUser = userService.update(id, userDtoToUserConverter.convert(updateUserDto));
         return userToUserDtoConverter.convert(updatedUser);
     }

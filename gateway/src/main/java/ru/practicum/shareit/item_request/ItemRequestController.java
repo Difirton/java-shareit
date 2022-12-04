@@ -27,6 +27,8 @@ import java.util.Optional;
 public class ItemRequestController {
     private final ItemRequestClient itemRequestClient;
     private static final String USER_REQUEST_HEADER = "X-Sharer-User-Id";
+    private static final int DEFAULT_SIZE = 10;
+    private static final int DEFAULT_FROM = 0;
 
     @Operation(summary = "Creates a new user's item request by user id, which is specified in header",
             tags = "The item request API")
@@ -84,7 +86,7 @@ public class ItemRequestController {
                                           @RequestHeader(USER_REQUEST_HEADER) Long userId,
                                                   @RequestParam Optional<Integer> from,
                                                   @RequestParam Optional<Integer> size) {
-        return itemRequestClient.findAllItemRequest(userId, from.orElse(10), size.orElse(10));
+        return itemRequestClient.findAllItemRequest(userId, from.orElse(DEFAULT_FROM), size.orElse(DEFAULT_SIZE));
     }
 
     @Operation(summary = "Get the item request by it's id, which is specified in URL", tags = "The item request API")

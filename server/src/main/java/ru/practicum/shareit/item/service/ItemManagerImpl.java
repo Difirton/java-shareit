@@ -70,7 +70,7 @@ public class ItemManagerImpl implements ItemManager {
     public ItemDto findById(Long id, Long userId) {
         Item item = itemService.findById(id);
         if (item.getOwner().getId().equals(userId)) {
-            ItemDto itemDto = itemToItemDtoConverter.convert(itemService.findById(id));
+            ItemDto itemDto = itemToItemDtoConverter.convert(item);
             return this.setBookings(Objects.requireNonNull(itemDto));
         }
         return itemToItemDtoConverter.convert(itemService.findById(id));

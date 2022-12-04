@@ -4,7 +4,6 @@ import lombok.*;
 import ru.practicum.shareit.user.repository.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,7 +20,6 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     @Column(name = "text", nullable = false, length = 1000)
     private String text;
 

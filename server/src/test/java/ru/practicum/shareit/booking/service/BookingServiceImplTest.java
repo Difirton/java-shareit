@@ -19,7 +19,6 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.repository.User;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +94,7 @@ class BookingServiceImplTest {
     void testNoValidSave() {
         booking.setStart(LocalDateTime.now());
         booking.setFinish(LocalDateTime.now().minusDays(1));
-        assertThrows(ValidationException.class, () -> bookingService.save(booking, 2L));
+        assertThrows(IllegalStateException.class, () -> bookingService.save(booking, 2L));
     }
 
     @Test

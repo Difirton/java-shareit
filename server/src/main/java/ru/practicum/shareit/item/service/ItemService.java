@@ -5,12 +5,11 @@ import ru.practicum.shareit.booking.repository.Booking;
 import ru.practicum.shareit.item.repository.Comment;
 import ru.practicum.shareit.item.repository.Item;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Validated
 public interface ItemService {
-    Item save(@Valid Item item);
+    Item save(Item item);
 
     List<Item> findAll(Long userId);
 
@@ -26,7 +25,7 @@ public interface ItemService {
 
     Item findAvailableRenter(Long id, Long renterId);
 
-    Comment saveComment(@Valid Comment comment);
+    Comment saveComment(Comment comment);
 
     List<Booking> findAllByItemId(Long id);
 }

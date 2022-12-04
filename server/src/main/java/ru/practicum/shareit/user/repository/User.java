@@ -6,8 +6,6 @@ import ru.practicum.shareit.item.repository.Item;
 import ru.practicum.shareit.item_request.repository.ItemRequest;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,12 +23,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Email
-    @NotBlank
     @Column(unique = true, nullable = false, length = 100)
     private String email;
 

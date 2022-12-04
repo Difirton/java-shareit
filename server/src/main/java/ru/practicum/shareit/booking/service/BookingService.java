@@ -4,13 +4,12 @@ import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.repository.Booking;
 import ru.practicum.shareit.booking.repository.constant.Status;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 @Validated
 public interface BookingService {
-    Booking save(@Valid Booking booking, Long renterId);
+    Booking save(Booking booking, Long renterId);
 
     List<Booking> findAllByRenterId(Long renterId, String stateName, Integer from, Integer size);
 

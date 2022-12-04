@@ -5,7 +5,6 @@ import ru.practicum.shareit.item.repository.Item;
 import ru.practicum.shareit.user.repository.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,6 @@ public class ItemRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     @Column(name = "description", nullable = false, length = 1000)
     private String description;
 

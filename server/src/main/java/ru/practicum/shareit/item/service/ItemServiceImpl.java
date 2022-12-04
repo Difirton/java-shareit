@@ -16,7 +16,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.common.utill.NotNullPropertiesCopier;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class ItemServiceImpl implements ItemService, NotNullPropertiesCopier<Ite
     private final CommentRepository commentRepository;
 
     @Override
-    public Item save(@Valid Item item) {
+    public Item save(Item item) {
         userService.findById(item.getOwner().getId());
         return itemRepository.save(item);
     }
@@ -95,7 +94,7 @@ public class ItemServiceImpl implements ItemService, NotNullPropertiesCopier<Ite
     }
 
     @Override
-    public Comment saveComment(@Valid Comment comment) {
+    public Comment saveComment(Comment comment) {
         Booking booking = bookingRepository.findFirstByItemIdAndRenterIdAndStatusAndFinishBefore(
                 comment.getItem().getId(), comment.getAuthor().getId(), Status.APPROVED, LocalDateTime.now())
                 .orElseThrow(() -> new IllegalStateException("Author with id = "

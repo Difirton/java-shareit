@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,13 +19,10 @@ import java.util.List;
 public class ItemDto {
     private Long id;
 
-    @NotBlank
     private String name;
 
-    @NotBlank
     private String description;
 
-    @NotNull
     private Boolean available;
 
     @JsonIgnore

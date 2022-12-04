@@ -19,8 +19,6 @@ import ru.practicum.shareit.user.error.UserNotFoundException;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -46,8 +44,8 @@ public class ServerExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler(value = {ConstraintViolationException.class, ItemNotAvailableException.class,
-            ValidationException.class, ItemNotAvailableException.class, IllegalStateException.class})
+    @ExceptionHandler(value = {ItemNotAvailableException.class, ItemNotAvailableException.class,
+            IllegalStateException.class})
     protected ResponseEntity<Object> handleBadRequest(RuntimeException ex, WebRequest request) {
         Map<String, Object> body = getErrorBody(HttpStatus.BAD_REQUEST, request);
         List<String> errors = Arrays.stream(ex.getMessage().split(", ")).collect(Collectors.toList());

@@ -13,7 +13,6 @@ import ru.practicum.shareit.item_request.web.convertor.ItemRequestToItemRequestD
 import ru.practicum.shareit.item_request.web.dto.ItemRequestAnswerWithItemsDto;
 import ru.practicum.shareit.item_request.web.dto.ItemRequestDto;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,10 +27,12 @@ public class ItemRequestController {
     private final ItemRequestToItemRequestDtoConvertor itemRequestToDtoConvertor;
     private final ItemRequestToItemRequestAnswerWithItemsDtoConvertor toItemRequestAnswerWithItemsDtoConvertor;
     private static final String USER_REQUEST_HEADER = "X-Sharer-User-Id";
+    private static final int DEFAULT_SIZE = 10;
+    private static final int DEFAULT_FROM = 0;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    ItemRequestDto createItemRequest(@RequestBody @Valid ItemRequestDto itemRequestDto,
+    ItemRequestDto createItemRequest(@RequestBody ItemRequestDto itemRequestDto,
                                      @RequestHeader(USER_REQUEST_HEADER) Long userId) {
         itemRequestDto.setUserId(userId);
         ItemRequest newItemRequest = itemRequestService.save(itemRequestFromDtoConvertor.convert(itemRequestDto));
@@ -52,8 +53,8 @@ public class ItemRequestController {
     List<ItemRequestAnswerWithItemsDto> getPageableItemsRequests(@RequestHeader(USER_REQUEST_HEADER) Long userId,
                                                   @RequestParam Optional<Integer> from,
                                                   @RequestParam Optional<Integer> size) {
-        List<ItemRequest> allPageableItemsRequests = itemRequestService.findAllPageable(userId, from.orElse(0),
-                size.orElse(20));
+        List<ItemRequest> allPageableItemsRequests = itemRequestService.findAllPageable(userId,
+                from.orElse(DEFAULT_FROM), size.orElse(DEFAULT_SIZE));
         return allPageableItemsRequests.stream()
                 .map(toItemRequestAnswerWithItemsDtoConvertor::convert)
                 .collect(Collectors.toList());

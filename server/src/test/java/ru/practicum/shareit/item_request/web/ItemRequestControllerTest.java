@@ -174,7 +174,7 @@ class ItemRequestControllerTest {
                                 .build())
                         .build()
         );
-        when(mockService.findAllPageable(1L, 0, 20)).thenReturn(itemsRequests);
+        when(mockService.findAllPageable(1L, 0, 10)).thenReturn(itemsRequests);
 
         mockMvc.perform(get("/requests/all")
                         .header(USER_REQUEST_HEADER, 1L))
@@ -189,6 +189,6 @@ class ItemRequestControllerTest {
                 .andExpect(jsonPath("$[1].description", is("test2")))
                 .andExpect(jsonPath("$[1].created",
                         is(LocalDateTime.of(2020, 2, 1, 1, 1, 1).toString())));
-        verify(mockService, times(1)).findAllPageable(1L, 0, 20);
+        verify(mockService, times(1)).findAllPageable(1L, 0, 10);
     }
 }

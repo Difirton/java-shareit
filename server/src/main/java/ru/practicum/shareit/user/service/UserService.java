@@ -3,12 +3,11 @@ package ru.practicum.shareit.user.service;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.user.repository.User;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Validated
 public interface UserService {
-    User save(@Valid User user);
+    User save(User user);
 
     List<User> findAll();
 

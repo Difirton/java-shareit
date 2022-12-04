@@ -5,8 +5,6 @@ import ru.practicum.shareit.item_request.repository.ItemRequest;
 import ru.practicum.shareit.user.repository.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +22,12 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @NotBlank
     @Column(name = "description", nullable = false, length = 600)
     private String description;
 
-    @NotNull
     @Column(name = "available", nullable = false)
     private Boolean available;
 

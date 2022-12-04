@@ -27,6 +27,8 @@ import java.util.Optional;
 public class BookingController {
     private final BookingClient bookingClient;
     private static final String USER_REQUEST_HEADER = "X-Sharer-User-Id";
+    private static final int DEFAULT_SIZE = 10;
+    private static final int DEFAULT_FROM = 0;
 
     @Operation(summary = "Creates a new user's booking by user id, which is specified in header",
             tags = "The booking API")
@@ -66,8 +68,8 @@ public class BookingController {
                                  @RequestParam(value = "state") Optional<String> stateName,
                                  @RequestParam Optional<Integer> from,
                                  @RequestParam Optional<Integer> size) {
-        return bookingClient.findAllByBookerId(userId, this.checkState(stateName), from.orElse(0),
-                size.orElse(10));
+        return bookingClient.findAllByBookerId(userId, this.checkState(stateName), from.orElse(DEFAULT_FROM),
+                size.orElse(DEFAULT_SIZE));
     }
 
     @Operation(summary = "Get the bookings by owner item id and state, which is specified in URL",
@@ -89,8 +91,8 @@ public class BookingController {
                                               @RequestParam(value = "state") Optional<String> stateName,
                                               @RequestParam Optional<Integer> from,
                                               @RequestParam Optional<Integer> size) {
-        return bookingClient.findAllByOwnerId(userId, this.checkState(stateName), from.orElse(0),
-                size.orElse(10));
+        return bookingClient.findAllByOwnerId(userId, this.checkState(stateName), from.orElse(DEFAULT_FROM),
+                size.orElse(DEFAULT_SIZE));
     }
 
     @Operation(summary = "Get the booking by it's id, which is specified in URL", tags = "The booking API")

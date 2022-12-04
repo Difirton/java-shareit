@@ -14,7 +14,6 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.common.utill.NotNullPropertiesCopier;
 
-import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +40,7 @@ public class BookingServiceImpl implements BookingService, NotNullPropertiesCopi
         } else {
             log.error("Attempt to add booking with start = {}, which is later than finish {}",
                     booking.getStart(), booking.getFinish());
-            throw new ValidationException("Star of booking must be after finish");
+            throw new IllegalStateException("Star of booking must be after finish");
         }
     }
 

@@ -107,7 +107,7 @@ class BookingControllerTest {
                                 .build())
                         .build()
         );
-        when(mockService.findAllByRenterId(1L, "ALL", 0, 20)).thenReturn(bookings);
+        when(mockService.findAllByRenterId(1L, "ALL", 0, 10)).thenReturn(bookings);
 
         mockMvc.perform(get("/bookings")
                         .header(USER_REQUEST_HEADER, 1L))
@@ -126,7 +126,7 @@ class BookingControllerTest {
                         is(LocalDateTime.of(2021, 1, 1, 1, 1, 1).toString())))
                 .andExpect(jsonPath("$[1].end",
                         is(LocalDateTime.of(2021, 2, 1, 1, 1, 1).toString())));
-        verify(mockService, times(1)).findAllByRenterId(1L, "ALL", 0, 20);
+        verify(mockService, times(1)).findAllByRenterId(1L, "ALL", 0, 10);
     }
 
     @Test

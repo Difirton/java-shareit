@@ -2,8 +2,6 @@ package ru.practicum.shareit.user.web.dto;
 
 import lombok.*;
 
-import javax.validation.constraints.Email;
-
 @Getter
 @Setter
 @Builder
@@ -14,6 +12,5 @@ public class UserDto {
 
     private String name;
 
-    @Email
     private String email;
 }

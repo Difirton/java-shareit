@@ -8,7 +8,6 @@ import ru.practicum.shareit.user.error.UserNotFoundException;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.common.utill.NotNullPropertiesCopier;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Validated
@@ -18,7 +17,7 @@ public class UserServiceImpl implements UserService, NotNullPropertiesCopier<Use
     private final UserRepository userRepository;
 
     @Override
-    public User save(@Valid User user) {
+    public User save(User user) {
         return userRepository.save(user);
     }
 
