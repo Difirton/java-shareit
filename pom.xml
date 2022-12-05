@@ -26,6 +26,7 @@
 		<spring.boot.version>2.7.2</spring.boot.version>
 		<swagger.version>2.2.4</swagger.version>
 		<springdoc-openapi.version>1.6.11</springdoc-openapi.version>
+		<postgresql.version>42.3.8</postgresql.version>
 	</properties>
 
 	<build>
